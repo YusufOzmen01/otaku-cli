@@ -11,5 +11,5 @@ func (m UI) View() string {
 		return fmt.Sprintf("Nothing found. Please try again")
 	}
 
-	return fmt.Sprintf("Search an anime %s", m.textInput.View())
+	return titleStyle.Render("Search Anime") + "\n\n" + textStyle.Render(m.textInput.View())
 }

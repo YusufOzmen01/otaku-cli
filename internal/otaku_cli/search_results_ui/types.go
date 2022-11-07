@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Keymap struct {
@@ -30,6 +31,8 @@ var keys = Keymap{
 	Quit: key.NewBinding(
 		key.WithKeys("ctrl+c")),
 }
+
+var titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#007700"))
 
 type UI struct {
 	tea.Model
