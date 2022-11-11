@@ -1,16 +1,25 @@
 package details_ui
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/charmbracelet/lipgloss"
+)
 
 func (m UI) View() string {
-	data := fmt.Sprintf("%s\n\n", m.AnimeDetails.AnimeTitle)
-	data += fmt.Sprintf("Title: %s\n", m.AnimeDetails.AnimeTitle)
-	data += fmt.Sprintf("Type: %s\n", m.AnimeDetails.Type)
-	data += fmt.Sprintf("Status: %s\n", m.AnimeDetails.Status)
-	data += fmt.Sprintf("Genres: %s\n", m.AnimeDetails.Genres)
-	data += fmt.Sprintf("Other Name: %s\n", m.AnimeDetails.OtherNames)
-	data += fmt.Sprintf("Episode Count: %d\n\n", len(m.AnimeDetails.EpisodesList))
-	data += fmt.Sprintf("[w] Watch anime\n[q] Return to results")
+	data := lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%s\n", m.AnimeDetails.AnimeTitle))
+	data += lipgloss.NewStyle().Italic(true).Render(fmt.Sprintf(""+
+		"\nType: %s\n"+
+		"Status: %s\n"+
+		"Genres: %s\n"+
+		"Other Name: %s\n"+
+		"Episode Count: %d\n",
+		m.AnimeDetails.Type,
+		m.AnimeDetails.Status,
+		m.AnimeDetails.Genres,
+		m.AnimeDetails.OtherNames,
+		len(m.AnimeDetails.EpisodesList)))
+	//data += fmt.Sprintf("[w] Watch anime\n[q] Return to results")
+	data += "\n" + m.help.View(m.keys)
 
 	return data
 }

@@ -15,11 +15,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Quit
 
-		case key.Matches(msg, m.keys.Cancel):
+		case key.Matches(msg, m.keys.GoBack):
 			return m.ParentModel, nil
-
-		case key.Matches(msg, m.keys.Quit):
-			return m, tea.Quit
 
 		}
 
