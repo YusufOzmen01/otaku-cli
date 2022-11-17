@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func NewUI() UI {
+func NewUI(parent tea.Model) UI {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#00aa00"))
@@ -21,6 +21,7 @@ func NewUI() UI {
 		keys:      keys,
 		textInput: ti,
 		spinner:   s,
+		ParentUI:  parent,
 	}
 }
 

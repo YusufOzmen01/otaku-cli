@@ -26,7 +26,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.searchAnime
 
 		case key.Matches(msg, m.keys.Quit):
-			return m, tea.Quit
+			return m.ParentUI, nil
 
 		default:
 			if !m.loading {

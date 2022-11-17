@@ -22,6 +22,10 @@ type DetailMsg struct {
 	Data *AnimeDetails
 }
 
+type StreamResultData struct {
+	Data *StreamData
+}
+
 type WaitMsg struct {
 }
 
@@ -48,6 +52,26 @@ type AnimeDetails struct {
 		EpisodeNum string `json:"episodeNum"`
 		EpisodeUrl string `json:"episodeUrl"`
 	} `json:"episodesList"`
+}
+
+type Stream struct {
+	File  string `json:"file"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
+}
+
+type StreamData struct {
+	Referer string `json:"Referer"`
+	Sources []struct {
+		File  string `json:"file"`
+		Label string `json:"label"`
+		Type  string `json:"type"`
+	} `json:"sources"`
+	SourcesBk []struct {
+		File  string `json:"file"`
+		Label string `json:"label"`
+		Type  string `json:"type"`
+	} `json:"sources_bk"`
 }
 
 type AnimeResultDelegate struct{}

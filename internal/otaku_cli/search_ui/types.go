@@ -17,7 +17,7 @@ var keys = Keymap{
 	Enter: key.NewBinding(
 		key.WithKeys("enter")),
 	Quit: key.NewBinding(
-		key.WithKeys("ctrl+c")),
+		key.WithKeys("esc")),
 }
 
 var (
@@ -27,6 +27,7 @@ var (
 
 type UI struct {
 	tea.Model
+	ParentUI  tea.Model
 	spinner   spinner.Model
 	textInput textinput.Model
 
