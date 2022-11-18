@@ -18,10 +18,10 @@ func NewUI(parent tea.Model) UI {
 	ti.Width = 32
 
 	return UI{
-		keys:      keys,
-		textInput: ti,
-		spinner:   s,
-		ParentUI:  parent,
+		keys:        keys,
+		textInput:   ti,
+		spinner:     s,
+		ParentModel: parent,
 	}
 }
 

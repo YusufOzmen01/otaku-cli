@@ -27,9 +27,9 @@ var (
 
 type UI struct {
 	tea.Model
-	ParentUI  tea.Model
-	spinner   spinner.Model
-	textInput textinput.Model
+	ParentModel tea.Model
+	spinner     spinner.Model
+	textInput   textinput.Model
 
 	loading  bool
 	nothing  bool

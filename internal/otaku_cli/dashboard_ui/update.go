@@ -14,7 +14,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case key.Matches(msg, m.keys.Search):
-			return search_ui.NewUI(m.Model), nil
+			return search_ui.NewUI(m), nil
 
 		case key.Matches(msg, m.keys.LastWatched):
 			return m, tea.Quit
