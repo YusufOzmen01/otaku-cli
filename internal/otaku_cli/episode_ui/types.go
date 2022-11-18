@@ -1,4 +1,4 @@
-package details_ui
+package episode_ui
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
@@ -9,16 +9,20 @@ import (
 )
 
 type Keymap struct {
-	EpisodeList key.Binding
-	GoBack      key.Binding
-	Quit        key.Binding
+	Previous key.Binding
+	Next     key.Binding
+	GoBack   key.Binding
+	Quit     key.Binding
 }
 
 var (
 	keys = Keymap{
-		EpisodeList: key.NewBinding(
-			key.WithKeys("e"),
-			key.WithHelp("e", "episode list")),
+		Next: key.NewBinding(
+			key.WithKeys("right"),
+			key.WithHelp("→", "next episode")),
+		Previous: key.NewBinding(
+			key.WithKeys("left"),
+			key.WithHelp("←", "previous episode")),
 		GoBack: key.NewBinding(
 			key.WithKeys("q"),
 			key.WithHelp("q", "go back")),
@@ -29,12 +33,12 @@ var (
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.EpisodeList, k.GoBack}
+	return []key.Binding{k.Next, k.Previous, k.GoBack}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.EpisodeList, k.GoBack},
+		{k.Next, k.Previous, k.GoBack},
 	}
 }
 
@@ -42,8 +46,11 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
-	*constants.AnimeDetails
-	*constants.AnimeResult
+	episodes            []*constants.Episode
+	parentUUID          uuid.UUID
+	currentEpisodeIndex int
+	init                bool
+	episodeLoading      bool
 
 	keys Keymap
 	help help.Model

@@ -2,6 +2,7 @@ package episodes_ui
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/episode_ui"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,11 +15,11 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		items := make([]list.Item, 0)
 
-		for _, result := range m.episodes {
-			items = append(items, list.Item(result))
+		for _, episode := range m.episodes {
+			items = append(items, list.Item(episode))
 		}
 
-		m.list = list.New(items, constants.AnimeResultDelegate{}, 0, 20)
+		m.list = list.New(items, constants.AnimeEpisodesDelegate{}, 0, 20)
 		m.list.Title = titleStyle.Render("Episode List")
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
@@ -31,21 +32,22 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keys.Enter):
-			_, ok := m.list.SelectedItem().(*constants.Episode)
-			if ok {
+		if !m.list.SettingFilter() {
+			switch {
+			case key.Matches(msg, m.keys.Quit):
+				return m, tea.Quit
+
+			case key.Matches(msg, m.keys.Enter):
+				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Cursor())
+
+				return constants.SwitchUI(m, ui, ui.UUID)
+
+			case key.Matches(msg, m.keys.Return):
+				return constants.ReturnUI(m.UUID)
+
+			case key.Matches(msg, m.keys.Quit):
 				return m, tea.Quit
 			}
-
-			return m, nil
-
-		case key.Matches(msg, m.keys.Return):
-			return constants.ReturnUI(m.UUID)
-
-		case key.Matches(msg, m.keys.Quit):
-			return m, tea.Quit
-
 		}
 
 	case tea.WindowSizeMsg:

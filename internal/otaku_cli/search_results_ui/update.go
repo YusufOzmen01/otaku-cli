@@ -32,22 +32,27 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keys.Enter):
-			i, ok := m.list.SelectedItem().(*constants.AnimeResult)
-			if ok {
-				m.selected = i
+		if !m.list.SettingFilter() {
+			switch {
+			case key.Matches(msg, m.keys.Quit):
+				return m, tea.Quit
+
+			case key.Matches(msg, m.keys.Enter):
+				i, ok := m.list.SelectedItem().(*constants.AnimeResult)
+				if ok {
+					m.selected = i
+				}
+
+				m.loading = true
+
+				return m, m.getAnimeDetails
+
+			case key.Matches(msg, m.keys.Return):
+				return constants.ReturnUI(m.UUID)
+
+			case key.Matches(msg, m.keys.Quit):
+				return m, tea.Quit
 			}
-
-			m.loading = true
-
-			return m, m.getAnimeDetails
-
-		case key.Matches(msg, m.keys.Return):
-			return constants.ReturnUI(m.UUID)
-
-		case key.Matches(msg, m.keys.Quit):
-			return m, tea.Quit
 		}
 
 	case constants.DetailMsg:

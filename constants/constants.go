@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
 	"io"
+	"os/exec"
 )
 
 const ApiUrl = "https://gogoanime.consumet.org"
@@ -96,7 +97,16 @@ func ReturnUI(selfUUID uuid.UUID) (tea.Model, tea.Cmd) {
 	return parent, func() tea.Msg {
 		return nil
 	}
+}
 
+func KillProcessByNameWindows(processName string) int {
+	kill := exec.Command("taskkill", "/im", processName, "/T", "/F")
+	err := kill.Run()
+	if err != nil {
+		return -1
+	}
+
+	return 0
 }
 
 type AnimeResultDelegate struct{}
@@ -108,6 +118,10 @@ func (i AnimeResult) Title() string {
 
 func (i Episode) EpisodeTitle() string {
 	return fmt.Sprintf("Episode %s", i.EpisodeNum)
+}
+
+func (i Episode) FilterValue() string {
+	return i.EpisodeNum
 }
 
 func (i AnimeResult) Description() string {

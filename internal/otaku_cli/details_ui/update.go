@@ -13,6 +13,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, m.keys.Quit):
+			return m, tea.Quit
+
 		case key.Matches(msg, m.keys.EpisodeList):
 			ui := episodes_ui.NewUI(m.EpisodesList)
 
