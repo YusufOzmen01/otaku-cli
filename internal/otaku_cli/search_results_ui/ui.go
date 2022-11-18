@@ -3,13 +3,14 @@ package search_results_ui
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/google/uuid"
 )
 
-func NewUI(parentModel tea.Model, results []*constants.AnimeResult) UI {
+func NewUI(results []*constants.AnimeResult) UI {
 	return UI{
-		ParentModel: parentModel,
-		Results:     results,
-		keys:        keys,
+		Results: results,
+		keys:    keys,
+		UUID:    uuid.New(),
 	}
 }
 

@@ -26,7 +26,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.searchAnime
 
 		case key.Matches(msg, m.keys.Quit):
-			return m.ParentModel, nil
+			return constants.ReturnUI(m.UUID)
 
 		default:
 			if !m.loading {
@@ -54,7 +54,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.switched = true
 		m.textInput.SetValue("")
 
-		return search_results_ui.NewUI(m, msg.Data), nil
+		ui := search_results_ui.NewUI(msg.Data)
+
+		return constants.SwitchUI(m, ui, ui.UUID)
 
 	case constants.WaitMsg:
 		m.nothing = false

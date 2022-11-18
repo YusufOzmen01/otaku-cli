@@ -6,25 +6,18 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/google/uuid"
 )
 
 type Keymap struct {
-	Up     key.Binding
-	Down   key.Binding
 	Enter  key.Binding
 	Return key.Binding
 	Quit   key.Binding
 }
 
 var keys = Keymap{
-	Up: key.NewBinding(
-		key.WithKeys("up"),
-		key.WithHelp("↑", "move up")),
-	Down: key.NewBinding(key.WithKeys("down"),
-		key.WithHelp("↓", "move down")),
 	Enter: key.NewBinding(
-		key.WithKeys("enter"),
-		key.WithHelp("⏎", "select")),
+		key.WithKeys("enter")),
 	Return: key.NewBinding(
 		key.WithKeys("q"),
 		key.WithHelp("q", "return to search")),
@@ -36,8 +29,8 @@ var titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#007700"))
 
 type UI struct {
 	tea.Model
-	ParentModel tea.Model
-	list        list.Model
+	UUID uuid.UUID
+	list list.Model
 
 	Results  []*constants.AnimeResult
 	selected *constants.AnimeResult

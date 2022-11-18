@@ -1,4 +1,4 @@
-package details_ui
+package episodes_ui
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
@@ -7,13 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewUI(details *constants.AnimeDetails, result *constants.AnimeResult) UI {
+func NewUI(episodes []*constants.Episode) UI {
 	return UI{
-		AnimeDetails: details,
-		AnimeResult:  result,
-		keys:         keys,
-		help:         help.New(),
-		UUID:         uuid.New(),
+		keys:     keys,
+		help:     help.New(),
+		episodes: episodes,
+		UUID:     uuid.New(),
 	}
 }
 

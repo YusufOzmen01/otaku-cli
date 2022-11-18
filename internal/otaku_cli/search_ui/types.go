@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/google/uuid"
 )
 
 type Keymap struct {
@@ -27,9 +28,9 @@ var (
 
 type UI struct {
 	tea.Model
-	ParentModel tea.Model
-	spinner     spinner.Model
-	textInput   textinput.Model
+	UUID      uuid.UUID
+	spinner   spinner.Model
+	textInput textinput.Model
 
 	loading  bool
 	nothing  bool

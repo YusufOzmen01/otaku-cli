@@ -5,9 +5,10 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/google/uuid"
 )
 
-func NewUI(parent tea.Model) UI {
+func NewUI() UI {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#00aa00"))
@@ -18,10 +19,10 @@ func NewUI(parent tea.Model) UI {
 	ti.Width = 32
 
 	return UI{
-		keys:        keys,
-		textInput:   ti,
-		spinner:     s,
-		ParentModel: parent,
+		keys:      keys,
+		textInput: ti,
+		spinner:   s,
+		UUID:      uuid.New(),
 	}
 }
 

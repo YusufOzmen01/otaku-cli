@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/google/uuid"
 )
 
 type Keymap struct {
@@ -38,6 +39,7 @@ func (k Keymap) FullHelp() [][]key.Binding {
 
 type UI struct {
 	tea.Model
+	UUID uuid.UUID
 
 	keys Keymap
 	help help.Model
