@@ -1,10 +1,11 @@
 package otaku_cli
 
 import (
-	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/dashboard_ui"
+	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	tea "github.com/charmbracelet/bubbletea"
 	"os"
+	"path"
 )
 
 type OtakuCli interface {
@@ -22,8 +23,18 @@ func NewOtakuCli() OtakuCli {
 }
 
 func (oc *otakuCli) Run() {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	if err := database.InitializeDatabase(path.Join(home, ".otaku-cli")); err != nil {
+		panic(err)
+	}
+
+	defer database.DB.Close()
+
 	if err := oc.program.Start(); err != nil {
-		fmt.Printf("An error occured: %s", err)
-		os.Exit(1)
+		panic(err)
 	}
 }

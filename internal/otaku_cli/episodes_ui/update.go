@@ -3,6 +3,7 @@ package episodes_ui
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/episode_ui"
+	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,7 +20,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			items = append(items, list.Item(episode))
 		}
 
-		m.list = list.New(items, constants.AnimeEpisodesDelegate{}, 0, 20)
+		m.list = list.New(items, constants.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
 		m.list.Title = titleStyle.Render("Episode List")
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
@@ -38,7 +39,17 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case key.Matches(msg, m.keys.Enter):
-				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Cursor())
+				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Index())
+
+				anime := &database.Anime{
+					ID:                   m.details.AnimeId,
+					Name:                 m.details.AnimeTitle,
+					LastWatchedEpisodeID: m.episodes[m.list.Index()].EpisodeId,
+				}
+
+				if err := database.WatchAnime(anime); err != nil {
+					panic(err)
+				}
 
 				return constants.SwitchUI(m, ui, ui.UUID)
 

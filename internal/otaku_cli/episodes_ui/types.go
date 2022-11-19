@@ -53,6 +53,8 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
+	details *constants.AnimeResult
+
 	keys Keymap
 	help help.Model
 	list list.Model

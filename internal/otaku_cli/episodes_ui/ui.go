@@ -7,12 +7,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewUI(episodes []*constants.Episode) UI {
+func NewUI(episodes []*constants.Episode, details *constants.AnimeResult) UI {
 	return UI{
 		keys:     keys,
 		help:     help.New(),
 		episodes: episodes,
 		UUID:     uuid.New(),
+		details:  details,
 	}
 }
 

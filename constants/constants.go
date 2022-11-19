@@ -2,6 +2,7 @@ package constants
 
 import (
 	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -110,7 +111,9 @@ func KillProcessByNameWindows(processName string) int {
 }
 
 type AnimeResultDelegate struct{}
-type AnimeEpisodesDelegate struct{}
+type AnimeEpisodesDelegate struct {
+	AnimeID string
+}
 
 func (i AnimeResult) Title() string {
 	return i.AnimeTitle
@@ -182,10 +185,17 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	str := fmt.Sprintf("%s", i.EpisodeTitle())
 
+	lastWatched, err := database.GetAnimeProgress(d.AnimeID)
+	if err == nil {
+		if i.EpisodeId == lastWatched.LastWatchedEpisodeID {
+			str += " " + lipgloss.NewStyle().Italic(true).Render("(Currently on this episode)")
+		}
+	}
+
 	fn := lipgloss.NewStyle().PaddingLeft(4).Render
 	if index == m.Index() {
 		fn = func(str string) string {
-			return lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("#00aa00")).Render(fmt.Sprintf("%s", i.EpisodeTitle()))
+			return lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("#00aa00")).Render(str)
 		}
 	}
 
