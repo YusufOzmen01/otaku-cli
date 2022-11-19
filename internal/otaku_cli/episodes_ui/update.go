@@ -39,7 +39,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case key.Matches(msg, m.keys.Enter):
-				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Index())
+				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Index(), m.details)
 
 				anime := &database.Anime{
 					ID:                 m.details.AnimeId,

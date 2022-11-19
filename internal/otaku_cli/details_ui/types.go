@@ -9,6 +9,7 @@ import (
 )
 
 type Keymap struct {
+	Watch       key.Binding
 	EpisodeList key.Binding
 	GoBack      key.Binding
 	Quit        key.Binding
@@ -16,6 +17,9 @@ type Keymap struct {
 
 var (
 	keys = Keymap{
+		Watch: key.NewBinding(
+			key.WithKeys("w"),
+			key.WithHelp("w", "start watching/continue watching where you left off")),
 		EpisodeList: key.NewBinding(
 			key.WithKeys("e"),
 			key.WithHelp("e", "episode list")),
@@ -29,12 +33,12 @@ var (
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.EpisodeList, k.GoBack}
+	return []key.Binding{k.EpisodeList, k.GoBack, k.Watch}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.EpisodeList, k.GoBack},
+		{k.EpisodeList, k.GoBack, k.Watch},
 	}
 }
 

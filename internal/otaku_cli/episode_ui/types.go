@@ -33,12 +33,12 @@ var (
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Next, k.Previous, k.GoBack}
+	return []key.Binding{k.Next, k.GoBack, k.Previous}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Next, k.Previous, k.GoBack},
+		{k.Next, k.GoBack, k.Previous},
 	}
 }
 
@@ -48,6 +48,7 @@ type UI struct {
 
 	episodes            []*constants.Episode
 	parentUUID          uuid.UUID
+	details             *constants.AnimeResult
 	currentEpisodeIndex int
 	init                bool
 	episodeLoading      bool

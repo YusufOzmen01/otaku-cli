@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewUI(parentUUID uuid.UUID, episodes []*constants.Episode, currentEpisodeIndex int) UI {
+func NewUI(parentUUID uuid.UUID, episodes []*constants.Episode, currentEpisodeIndex int, details *constants.AnimeResult) UI {
 	return UI{
 		parentUUID:          parentUUID,
 		episodes:            episodes,
@@ -15,6 +15,7 @@ func NewUI(parentUUID uuid.UUID, episodes []*constants.Episode, currentEpisodeIn
 		keys:                keys,
 		help:                help.New(),
 		UUID:                uuid.New(),
+		details:             details,
 	}
 }
 
