@@ -187,7 +187,7 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	lastWatched, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
-		if i.EpisodeId == lastWatched.LastWatchedEpisodeID {
+		if i.EpisodeNum == lastWatched.LastWatchedEpisode {
 			str += " " + lipgloss.NewStyle().Italic(true).Render("(Currently on this episode)")
 		}
 	}

@@ -42,9 +42,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Index())
 
 				anime := &database.Anime{
-					ID:                   m.details.AnimeId,
-					Name:                 m.details.AnimeTitle,
-					LastWatchedEpisodeID: m.episodes[m.list.Index()].EpisodeId,
+					ID:                 m.details.AnimeId,
+					Name:               m.details.AnimeTitle,
+					LastWatchedEpisode: m.episodes[m.list.Index()].EpisodeNum,
 				}
 
 				if err := database.WatchAnime(anime); err != nil {

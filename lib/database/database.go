@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/akrylysov/pogreb"
+	"strconv"
 )
 
 var (
@@ -51,15 +52,31 @@ func GetData(key string) ([]byte, error) {
 }
 
 func WatchAnime(anime *Anime) error {
-	if err := UpdateLastWatched(anime); err != nil {
-		return err
+	key := fmt.Sprintf("a[%s]", anime.ID)
+
+	a, err := GetData(key)
+	if err == nil {
+		data := new(Anime)
+		if err := json.Unmarshal(a, data); err != nil {
+			return err
+		}
+
+		num1, err := strconv.Atoi(data.LastWatchedEpisode)
+		if err != nil {
+			return err
+		}
+
+		num2, err := strconv.Atoi(anime.LastWatchedEpisode)
+		if err != nil {
+			return err
+		}
+
+		if num1 > num2 {
+			anime.LastWatchedEpisode = data.LastWatchedEpisode
+		}
 	}
 
-	return UpsertData(fmt.Sprintf("a[%s]", anime.ID), anime)
-}
-
-func UpdateLastWatched(anime *Anime) error {
-	return UpsertData("last-watched", anime)
+	return UpsertData(key, anime)
 }
 
 func GetLastWatched() (*Anime, error) {
