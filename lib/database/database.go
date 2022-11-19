@@ -79,20 +79,6 @@ func WatchAnime(anime *Anime) error {
 	return UpsertData(key, anime)
 }
 
-func GetLastWatched() (*Anime, error) {
-	lastWatched, err := GetData("last-watched")
-	if err != nil {
-		return nil, err
-	}
-
-	data := new(Anime)
-	if err := json.Unmarshal(lastWatched, data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
 func GetAnimeProgress(animeID string) (*Anime, error) {
 	lastWatched, err := GetData(fmt.Sprintf("a[%s]", animeID))
 	if err != nil {

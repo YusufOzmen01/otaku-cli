@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"io"
 	"os/exec"
+	"strconv"
 )
 
 const ApiUrl = "https://gogoanime.consumet.org"
@@ -187,6 +188,13 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	lastWatched, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
+		num1, _ := strconv.Atoi(i.EpisodeNum)
+		num2, _ := strconv.Atoi(lastWatched.LastWatchedEpisode)
+
+		if num1 <= num2 {
+			str = lipgloss.NewStyle().Foreground(lipgloss.Color("#4d4d4d")).Render(str)
+		}
+
 		if i.EpisodeNum == lastWatched.LastWatchedEpisode {
 			str += " " + lipgloss.NewStyle().Italic(true).Render("(Currently on this episode)")
 		}
