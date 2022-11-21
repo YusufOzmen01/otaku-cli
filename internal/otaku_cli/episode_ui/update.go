@@ -73,7 +73,6 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	case VLCMsg:
-		m.currentVLCData = msg.Data
 
 		pos, err := strconv.Atoi(msg.Data.Time)
 		if err != nil {
@@ -83,6 +82,17 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		length, err := strconv.Atoi(msg.Data.Length)
 		if err != nil {
 			panic(err)
+		}
+
+		if m.currentVLCData != nil {
+			posM, err := strconv.Atoi(m.currentVLCData.Time)
+			if err != nil {
+				panic(err)
+			}
+
+			if posM > 0 && pos == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text {
+				return constants.ReturnUI(m.parentUUID)
+			}
 		}
 
 		if pos+1 == length {
@@ -99,6 +109,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if err := database.WatchAnime(anime); err != nil {
 			panic(err)
 		}
+
+		m.currentVLCData = msg.Data
 
 		return m, m.vlcUpdate
 
@@ -131,7 +143,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			pos = "--start-time=" + strconv.Itoa(anime.Position)
 		}
 
-		err = exec.Command("vlc", msg.Data.Sources[0].File, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", pos).Start()
+		err = exec.Command("vlc", msg.Data.Sources[0].File, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000", pos).Start()
 		if err != nil {
 			return m, tea.Quit
 		}

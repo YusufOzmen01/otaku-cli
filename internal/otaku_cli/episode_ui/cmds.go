@@ -34,7 +34,7 @@ func (m UI) getAnimeStreamingURL() tea.Msg {
 }
 
 func (m UI) vlcUpdate() tea.Msg {
-	body, status, err := network.ProcessGet(context.Background(), "http://localhost:8080/requests/status.xml", map[string]string{"Authorization": "Basic OmFtb25ndXNfaXNfZnVubnk="})
+	body, status, err := network.ProcessGet(context.Background(), "http://localhost:58000/requests/status.xml", map[string]string{"Authorization": "Basic OmFtb25ndXNfaXNfZnVubnk="})
 	if err != nil {
 		return m.vlcUpdate()
 	}
