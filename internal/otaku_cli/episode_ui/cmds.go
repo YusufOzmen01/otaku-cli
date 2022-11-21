@@ -3,6 +3,7 @@ package episode_ui
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/lib/network"
@@ -30,4 +31,23 @@ func (m UI) getAnimeStreamingURL() tea.Msg {
 	}
 
 	return constants.StreamResultData{Data: data}
+}
+
+func (m UI) vlcUpdate() tea.Msg {
+	body, status, err := network.ProcessGet(context.Background(), "http://localhost:8080/requests/status.xml", map[string]string{"Authorization": "Basic OmFtb25ndXNfaXNfZnVubnk="})
+	if err != nil {
+		return m.vlcUpdate()
+	}
+
+	if status != 200 {
+		return m.vlcUpdate()
+	}
+
+	data := new(Root)
+
+	if err := xml.Unmarshal(body, data); err != nil {
+		return m.vlcUpdate()
+	}
+
+	return VLCMsg{Data: data}
 }

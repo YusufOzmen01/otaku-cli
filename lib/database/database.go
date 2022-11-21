@@ -74,6 +74,10 @@ func WatchAnime(anime *Anime) error {
 		if num1 > num2 {
 			anime.LastWatchedEpisode = data.LastWatchedEpisode
 		}
+
+		if anime.Position == 0 && data.LastWatchedEpisode == anime.LastWatchedEpisode {
+			anime.Position = data.Position
+		}
 	}
 
 	return UpsertData(key, anime)

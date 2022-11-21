@@ -7,7 +7,56 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"os/exec"
+	"strconv"
 )
+
+func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
+	if m.episodeLoading {
+		return m, nil
+	}
+
+	if m.currentEpisodeIndex-1 < 0 {
+		return m, nil
+	}
+
+	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex-1, m.details)
+
+	anime := &database.Anime{
+		ID:                 m.details.AnimeId,
+		Name:               m.details.AnimeTitle,
+		LastWatchedEpisode: m.episodes[m.currentEpisodeIndex-1].EpisodeNum,
+	}
+
+	if err := database.WatchAnime(anime); err != nil {
+		panic(err)
+	}
+
+	return constants.SwitchUI(m, ui, ui.UUID)
+}
+
+func (m UI) PreviousEpisode() (tea.Model, tea.Cmd) {
+	if m.episodeLoading {
+		return m, nil
+	}
+
+	if m.currentEpisodeIndex+1 == len(m.episodes) {
+		return m, nil
+	}
+
+	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex+1, m.details)
+
+	anime := &database.Anime{
+		ID:                 m.details.AnimeId,
+		Name:               m.details.AnimeTitle,
+		LastWatchedEpisode: m.episodes[m.currentEpisodeIndex+1].EpisodeNum,
+	}
+
+	if err := database.WatchAnime(anime); err != nil {
+		panic(err)
+	}
+
+	return constants.SwitchUI(m, ui, ui.UUID)
+}
 
 func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if !m.init {
@@ -18,77 +67,78 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	switch msg := msg.(type) {
+	case constants.ErrMsg:
+		fmt.Println(msg.Err)
+
+		return m, tea.Quit
+
+	case VLCMsg:
+		m.currentVLCData = msg.Data
+
+		pos, err := strconv.Atoi(msg.Data.Time)
+		if err != nil {
+			panic(err)
+		}
+
+		length, err := strconv.Atoi(msg.Data.Length)
+		if err != nil {
+			panic(err)
+		}
+
+		if pos+1 == length {
+			return m.NextEpisode()
+		}
+
+		anime := &database.Anime{
+			ID:                 m.details.AnimeId,
+			Name:               m.details.AnimeTitle,
+			LastWatchedEpisode: m.episodes[m.currentEpisodeIndex].EpisodeNum,
+			Position:           pos,
+		}
+
+		if err := database.WatchAnime(anime); err != nil {
+			panic(err)
+		}
+
+		return m, m.vlcUpdate
+
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keys.Quit):
+			constants.KillProcessByNameWindows("vlc.exe")
+
 			return m, tea.Quit
 
 		case key.Matches(msg, m.keys.Next):
-			if m.episodeLoading {
-				return m, nil
-			}
-
-			if m.currentEpisodeIndex-1 < 0 {
-				return m, nil
-			}
-
-			ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex-1, m.details)
-
-			anime := &database.Anime{
-				ID:                 m.details.AnimeId,
-				Name:               m.details.AnimeTitle,
-				LastWatchedEpisode: m.episodes[m.currentEpisodeIndex-1].EpisodeNum,
-			}
-
-			if err := database.WatchAnime(anime); err != nil {
-				panic(err)
-			}
-
-			return constants.SwitchUI(m, ui, ui.UUID)
+			return m.NextEpisode()
 
 		case key.Matches(msg, m.keys.Previous):
-			if m.episodeLoading {
-				return m, nil
-			}
-
-			if m.currentEpisodeIndex+1 == len(m.episodes) {
-				return m, nil
-			}
-
-			ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex+1, m.details)
-
-			anime := &database.Anime{
-				ID:                 m.details.AnimeId,
-				Name:               m.details.AnimeTitle,
-				LastWatchedEpisode: m.episodes[m.currentEpisodeIndex+1].EpisodeNum,
-			}
-
-			if err := database.WatchAnime(anime); err != nil {
-				panic(err)
-			}
-
-			return constants.SwitchUI(m, ui, ui.UUID)
+			return m.PreviousEpisode()
 
 		case key.Matches(msg, m.keys.GoBack):
+			constants.KillProcessByNameWindows("vlc.exe")
+
 			return constants.ReturnUI(m.parentUUID)
 		}
 
 	case constants.StreamResultData:
 		constants.KillProcessByNameWindows("vlc.exe")
 
-		err := exec.Command("vlc", msg.Data.Sources[0].File).Start()
+		pos := ""
+
+		anime, err := database.GetAnimeProgress(m.details.AnimeId)
+		if err == nil {
+			pos = "--start-time=" + strconv.Itoa(anime.Position)
+		}
+
+		err = exec.Command("vlc", msg.Data.Sources[0].File, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", pos).Start()
 		if err != nil {
 			return m, tea.Quit
 		}
 
 		m.episodeLoading = false
 
-		return m, nil
-
-	case constants.ErrMsg:
-		fmt.Println(msg.Err)
-
-		return m, tea.Quit
+		return m, m.vlcUpdate
 	}
 
 	return m, nil

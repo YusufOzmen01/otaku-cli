@@ -3,7 +3,6 @@ package network
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -18,7 +17,7 @@ var (
 )
 
 func ProcessGet(ctx context.Context, url string, headers map[string]string) ([]byte, int, error) {
-	return doSafeHTTPCall(ctx, defaultHTTPClient, "GET", url, nil, headers)
+	return unsafeHTTPCall(ctx, defaultHTTPClient, "GET", url, nil, headers)
 }
 
 func unsafeHTTPCall(ctx context.Context, client *http.Client, method string, url string, body []byte, headers map[string]string) ([]byte, int, error) {
@@ -43,35 +42,4 @@ func unsafeHTTPCall(ctx context.Context, client *http.Client, method string, url
 	}
 
 	return body, resp.StatusCode, nil
-}
-
-func doSafeHTTPCall(ctx context.Context, client *http.Client, method, url string, body []byte, headers map[string]string) ([]byte, int, error) {
-	var (
-		didBreak bool
-		status   int
-		resp     []byte
-		err      error
-	)
-
-	for i := 0; i < 5; i++ {
-		resp, status, err = unsafeHTTPCall(ctx, client, method, url, body, headers)
-
-		if err == nil && status == http.StatusOK {
-			didBreak = true
-
-			break
-		}
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		time.Sleep(1 * time.Second)
-	}
-
-	if !didBreak {
-		return nil, status, fmt.Errorf("failed to send request")
-	}
-
-	return resp, status, nil
 }
