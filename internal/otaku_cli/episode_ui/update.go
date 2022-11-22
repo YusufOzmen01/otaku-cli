@@ -15,23 +15,38 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	if m.currentEpisodeIndex+1 == len(m.episodes) {
-		return m, nil
+	episodeIndex := m.currentEpisodeIndex + 1
+	finished := false
+
+	if episodeIndex == len(m.episodes) {
+		episodeIndex--
+		finished = true
 	}
 
-	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex+1, m.details)
+	ui := NewUI(m.parentUUID, m.episodes, episodeIndex, m.details)
+
+	length, err := strconv.Atoi(m.currentVLCData.Length)
+	if err != nil {
+		panic(err)
+	}
 
 	anime := &database.Anime{
 		ID:   m.details.AnimeId,
 		Name: m.details.AnimeTitle,
 		EpisodeProgress: &database.EpisodeProgress{
-			CurrentEpisodeIndex: m.currentEpisodeIndex + 1,
-			MaxEpisodes:         len(m.episodes),
+			CurrentEpisodeIndex:      episodeIndex,
+			MaxEpisodes:              len(m.episodes),
+			CurrentPositionInEpisode: length,
 		},
+		Finished: finished,
 	}
 
 	if err := database.WatchAnime(anime); err != nil {
 		panic(err)
+	}
+
+	if finished {
+		return constants.ReturnUI(m.UUID)
 	}
 
 	return constants.SwitchUI(m, ui, ui.UUID)
@@ -100,7 +115,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		if pos+1 == length {
+		if length > 0 && pos+1 >= length {
 			return m.NextEpisode()
 		}
 
@@ -148,7 +163,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		anime, err := database.GetAnimeProgress(m.details.AnimeId)
 		if err == nil {
-			pos = "--start-time=" + strconv.Itoa(anime.EpisodeProgress.CurrentPositionInEpisode)
+			if anime.EpisodeProgress.CurrentEpisodeIndex == m.currentEpisodeIndex {
+				pos = "--start-time=" + strconv.Itoa(anime.EpisodeProgress.CurrentPositionInEpisode)
+			}
 		}
 
 		args := []string{msg.Data.Sources[0].File, pos, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000"}

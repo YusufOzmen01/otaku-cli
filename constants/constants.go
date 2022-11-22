@@ -200,14 +200,17 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	lastWatched, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
-		num1, _ := strconv.Atoi(i.EpisodeNum)
+		num1, err := strconv.Atoi(i.EpisodeNum)
+		if err != nil {
+			panic(err)
+		}
 
-		if num1 <= lastWatched.EpisodeProgress.CurrentEpisodeIndex {
+		if num1-1 < lastWatched.EpisodeProgress.CurrentEpisodeIndex || lastWatched.Finished {
 			str = lipgloss.NewStyle().Foreground(lipgloss.Color("#4d4d4d")).Render(str)
 		}
 
-		if num1 == lastWatched.EpisodeProgress.CurrentEpisodeIndex {
-			str += " " + lipgloss.NewStyle().Italic(true).Render("(Currently on this episode)")
+		if num1-1 == lastWatched.EpisodeProgress.CurrentEpisodeIndex && !lastWatched.Finished {
+			str += " " + lipgloss.NewStyle().Italic(true).Bold(true).Render("<- Currently on this episode")
 		}
 	}
 
