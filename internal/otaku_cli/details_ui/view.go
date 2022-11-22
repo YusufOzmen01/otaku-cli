@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/lipgloss"
-	"strconv"
 	"time"
 )
 
@@ -14,9 +13,8 @@ func (m UI) View() string {
 
 	anime, err := database.GetAnimeProgress(m.AnimeResult.AnimeId)
 	if err == nil {
-		e, _ := strconv.Atoi(anime.LastWatchedEpisode)
-		currentEpisode = e
-		position = anime.Position
+		currentEpisode = anime.EpisodeProgress.CurrentEpisodeIndex + 1
+		position = anime.EpisodeProgress.CurrentPositionInEpisode
 	}
 
 	data := lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%s\n", m.AnimeDetails.AnimeTitle))

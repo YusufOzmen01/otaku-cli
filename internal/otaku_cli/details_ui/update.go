@@ -27,23 +27,24 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return constants.ReturnUI(m.UUID)
 
 		case key.Matches(msg, m.keys.Watch):
-			index := len(m.EpisodesList) - 1
+			index, pos := 0, 0
 
 			a, err := database.GetAnimeProgress(m.AnimeId)
 			if err == nil {
-				for i, ep := range m.EpisodesList {
-					if ep.EpisodeNum == a.LastWatchedEpisode {
-						index = i
-					}
-				}
+				index = a.EpisodeProgress.CurrentEpisodeIndex
+				pos = a.EpisodeProgress.CurrentPositionInEpisode
 			}
 
 			ui := episode_ui.NewUI(m.UUID, m.EpisodesList, index, m.AnimeResult)
 
 			anime := &database.Anime{
-				ID:                 m.AnimeId,
-				Name:               m.AnimeDetails.AnimeTitle,
-				LastWatchedEpisode: m.EpisodesList[index].EpisodeNum,
+				ID:   m.AnimeId,
+				Name: m.AnimeDetails.AnimeTitle,
+				EpisodeProgress: &database.EpisodeProgress{
+					CurrentEpisodeIndex:      index,
+					MaxEpisodes:              len(m.EpisodesList),
+					CurrentPositionInEpisode: pos,
+				},
 			}
 
 			if err := database.WatchAnime(anime); err != nil {

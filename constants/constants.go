@@ -111,6 +111,18 @@ func KillProcessByNameWindows(processName string) int {
 	return 0
 }
 
+func ReverseSlice[T any](original []T) (reversed []T) {
+	reversed = make([]T, len(original))
+	copy(reversed, original)
+
+	for i := len(reversed)/2 - 1; i >= 0; i-- {
+		tmp := len(reversed) - 1 - i
+		reversed[i], reversed[tmp] = reversed[tmp], reversed[i]
+	}
+
+	return
+}
+
 type AnimeResultDelegate struct{}
 type AnimeEpisodesDelegate struct {
 	AnimeID string
@@ -189,13 +201,12 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 	lastWatched, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
 		num1, _ := strconv.Atoi(i.EpisodeNum)
-		num2, _ := strconv.Atoi(lastWatched.LastWatchedEpisode)
 
-		if num1 <= num2 {
+		if num1 <= lastWatched.EpisodeProgress.CurrentEpisodeIndex {
 			str = lipgloss.NewStyle().Foreground(lipgloss.Color("#4d4d4d")).Render(str)
 		}
 
-		if i.EpisodeNum == lastWatched.LastWatchedEpisode {
+		if num1 == lastWatched.EpisodeProgress.CurrentEpisodeIndex {
 			str += " " + lipgloss.NewStyle().Italic(true).Render("(Currently on this episode)")
 		}
 	}

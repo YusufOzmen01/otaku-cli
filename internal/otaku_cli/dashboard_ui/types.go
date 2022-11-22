@@ -8,9 +8,9 @@ import (
 )
 
 type Keymap struct {
-	Search      key.Binding
-	LastWatched key.Binding
-	Quit        key.Binding
+	Search key.Binding
+	MyList key.Binding
+	Quit   key.Binding
 }
 
 var (
@@ -18,9 +18,9 @@ var (
 		Search: key.NewBinding(
 			key.WithKeys("s"),
 			key.WithHelp("s", "search")),
-		LastWatched: key.NewBinding(
-			key.WithKeys("r"),
-			key.WithHelp("r", "last watched")),
+		MyList: key.NewBinding(
+			key.WithKeys("l"),
+			key.WithHelp("l", "my list")),
 		Quit: key.NewBinding(
 			key.WithKeys("ctrl+c", "q"),
 			key.WithHelp("q/ctrl+c", "quit the app")),
@@ -28,12 +28,12 @@ var (
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Search, k.LastWatched, k.Quit}
+	return []key.Binding{k.Search, k.MyList, k.Quit}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Search, k.LastWatched, k.Quit},
+		{k.Search, k.MyList, k.Quit},
 	}
 }
 

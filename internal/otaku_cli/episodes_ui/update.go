@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"strconv"
 )
 
 func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -41,10 +42,15 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case key.Matches(msg, m.keys.Enter):
 				ui := episode_ui.NewUI(m.UUID, m.episodes, m.list.Index(), m.details)
 
+				num, _ := strconv.Atoi(m.episodes[m.list.Index()].EpisodeNum)
+
 				anime := &database.Anime{
-					ID:                 m.details.AnimeId,
-					Name:               m.details.AnimeTitle,
-					LastWatchedEpisode: m.episodes[m.list.Index()].EpisodeNum,
+					ID:   m.details.AnimeId,
+					Name: m.details.AnimeTitle,
+					EpisodeProgress: &database.EpisodeProgress{
+						CurrentEpisodeIndex: num,
+						MaxEpisodes:         len(m.episodes),
+					},
 				}
 
 				if err := database.WatchAnime(anime); err != nil {

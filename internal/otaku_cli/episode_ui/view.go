@@ -6,9 +6,9 @@ import (
 )
 
 func (m UI) View() string {
-	str := fmt.Sprintf("Episode %s ", m.episodes[m.currentEpisodeIndex].EpisodeNum)
+	str := fmt.Sprintf("Episode %d ", m.currentEpisodeIndex+1)
 
-	if m.currentEpisodeIndex == 0 {
+	if m.currentEpisodeIndex == len(m.episodes)-1 {
 		str += lipgloss.NewStyle().Bold(true).Render("[Last Episode] ")
 	}
 

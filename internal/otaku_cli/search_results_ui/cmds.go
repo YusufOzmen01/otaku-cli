@@ -29,5 +29,7 @@ func (m UI) getAnimeDetails() tea.Msg {
 		return constants.ErrMsg{Err: err}
 	}
 
+	data.EpisodesList = constants.ReverseSlice(data.EpisodesList)
+
 	return constants.DetailMsg{Data: data}
 }

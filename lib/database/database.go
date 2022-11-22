@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/akrylysov/pogreb"
-	"strconv"
 )
 
 var (
@@ -61,22 +60,12 @@ func WatchAnime(anime *Anime) error {
 			return err
 		}
 
-		num1, err := strconv.Atoi(data.LastWatchedEpisode)
-		if err != nil {
-			return err
+		if data.EpisodeProgress.CurrentEpisodeIndex > anime.EpisodeProgress.CurrentPositionInEpisode {
+			anime.EpisodeProgress.CurrentPositionInEpisode = data.EpisodeProgress.CurrentEpisodeIndex
 		}
 
-		num2, err := strconv.Atoi(anime.LastWatchedEpisode)
-		if err != nil {
-			return err
-		}
-
-		if num1 > num2 {
-			anime.LastWatchedEpisode = data.LastWatchedEpisode
-		}
-
-		if anime.Position == 0 && data.LastWatchedEpisode == anime.LastWatchedEpisode {
-			anime.Position = data.Position
+		if data.EpisodeProgress.CurrentPositionInEpisode > anime.EpisodeProgress.CurrentPositionInEpisode && data.EpisodeProgress.CurrentEpisodeIndex == anime.EpisodeProgress.CurrentEpisodeIndex {
+			anime.EpisodeProgress.CurrentPositionInEpisode = data.EpisodeProgress.CurrentPositionInEpisode
 		}
 	}
 

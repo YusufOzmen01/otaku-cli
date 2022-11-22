@@ -19,7 +19,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return constants.SwitchUI(m, ui, ui.UUID)
 
-		case key.Matches(msg, m.keys.LastWatched):
+		case key.Matches(msg, m.keys.MyList):
 			return m, tea.Quit
 		}
 
