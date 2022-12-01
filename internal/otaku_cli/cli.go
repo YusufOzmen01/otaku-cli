@@ -1,7 +1,7 @@
 package otaku_cli
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/dashboard_ui"
+	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/dashboard"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	tea "github.com/charmbracelet/bubbletea"
 	"os"
@@ -18,7 +18,7 @@ type otakuCli struct {
 
 func NewOtakuCli() OtakuCli {
 	return &otakuCli{
-		program: tea.NewProgram(dashboard_ui.NewUI(), tea.WithAltScreen()),
+		program: tea.NewProgram(dashboard.NewUI(), tea.WithAltScreen()),
 	}
 }
 

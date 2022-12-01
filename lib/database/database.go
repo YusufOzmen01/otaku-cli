@@ -85,3 +85,27 @@ func GetAnimeProgress(animeID string) (*Anime, error) {
 
 	return data, nil
 }
+
+func GetAllAnimes() ([]*Anime, error) {
+	it := DB.Items()
+	animeList := make([]*Anime, 0)
+	for {
+		_, value, err := it.Next()
+		if err == pogreb.ErrIterationDone {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		anime := new(Anime)
+		if err := json.Unmarshal(value, anime); err != nil {
+			return nil, err
+		}
+
+		animeList = append(animeList, anime)
+	}
+
+	return animeList, nil
+}
