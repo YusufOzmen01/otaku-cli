@@ -1,11 +1,10 @@
 package search_results
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
 )
 
@@ -25,15 +24,13 @@ var keys = Keymap{
 		key.WithKeys("ctrl+c")),
 }
 
-var titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#007700"))
-
 type UI struct {
 	tea.Model
 	UUID uuid.UUID
 	list list.Model
 
-	Results  []*constants.AnimeResult
-	selected *constants.AnimeResult
+	Results  []*styles.AnimeResult
+	selected *styles.AnimeResult
 
 	init     bool
 	switched bool

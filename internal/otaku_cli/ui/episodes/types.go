@@ -1,12 +1,11 @@
 package episodes
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
 )
 
@@ -36,8 +35,6 @@ var (
 	}
 )
 
-var titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#007700"))
-
 func (k Keymap) ShortHelp() []key.Binding {
 	return []key.Binding{k.Up, k.Down, k.Enter, k.Return}
 }
@@ -53,12 +50,12 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
-	details *constants.AnimeResult
+	details *styles.AnimeResult
 
 	keys Keymap
 	help help.Model
 	list list.Model
 
 	init     bool
-	episodes []*constants.Episode
+	episodes []*styles.Episode
 }

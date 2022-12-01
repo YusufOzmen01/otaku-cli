@@ -60,11 +60,11 @@ func WatchAnime(anime *Anime) error {
 			return err
 		}
 
-		if data.EpisodeProgress.CurrentEpisodeIndex > anime.EpisodeProgress.CurrentEpisodeIndex {
+		if data.EpisodeProgress.CurrentEpisodeNumber > anime.EpisodeProgress.CurrentEpisodeNumber {
 			return nil
 		}
 
-		if data.EpisodeProgress.CurrentPositionInEpisode > anime.EpisodeProgress.CurrentPositionInEpisode && data.EpisodeProgress.CurrentEpisodeIndex == anime.EpisodeProgress.CurrentEpisodeIndex {
+		if data.EpisodeProgress.CurrentPositionInEpisode > anime.EpisodeProgress.CurrentPositionInEpisode && data.EpisodeProgress.CurrentEpisodeNumber == anime.EpisodeProgress.CurrentEpisodeNumber {
 			anime.EpisodeProgress.CurrentPositionInEpisode = data.EpisodeProgress.CurrentPositionInEpisode
 		}
 	}

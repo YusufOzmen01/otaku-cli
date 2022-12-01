@@ -34,11 +34,10 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		ID:   m.details.AnimeId,
 		Name: m.details.AnimeTitle,
 		EpisodeProgress: &database.EpisodeProgress{
-			CurrentEpisodeIndex:      episodeIndex,
+			CurrentEpisodeNumber:     episodeIndex,
 			MaxEpisodes:              len(m.episodes),
 			CurrentPositionInEpisode: length,
 		},
-		Finished: finished,
 	}
 
 	if err := database.WatchAnime(anime); err != nil {
@@ -67,8 +66,8 @@ func (m UI) PreviousEpisode() (tea.Model, tea.Cmd) {
 		ID:   m.details.AnimeId,
 		Name: m.details.AnimeTitle,
 		EpisodeProgress: &database.EpisodeProgress{
-			CurrentEpisodeIndex: m.currentEpisodeIndex - 1,
-			MaxEpisodes:         len(m.episodes),
+			CurrentEpisodeNumber: m.currentEpisodeIndex - 1,
+			MaxEpisodes:          len(m.episodes),
 		},
 	}
 
@@ -123,9 +122,10 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			ID:   m.details.AnimeId,
 			Name: m.details.AnimeTitle,
 			EpisodeProgress: &database.EpisodeProgress{
-				CurrentEpisodeIndex:      m.currentEpisodeIndex,
+				CurrentEpisodeNumber:     m.currentEpisodeIndex,
 				MaxEpisodes:              len(m.episodes),
 				CurrentPositionInEpisode: pos,
+				EpisodeLength:            length,
 			},
 		}
 
@@ -163,7 +163,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		anime, err := database.GetAnimeProgress(m.details.AnimeId)
 		if err == nil {
-			if anime.EpisodeProgress.CurrentEpisodeIndex == m.currentEpisodeIndex {
+			if anime.EpisodeProgress.CurrentEpisodeNumber == m.currentEpisodeIndex {
 				pos = "--start-time=" + strconv.Itoa(anime.EpisodeProgress.CurrentPositionInEpisode)
 			}
 		}

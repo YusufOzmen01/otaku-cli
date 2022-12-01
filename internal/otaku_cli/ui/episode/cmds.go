@@ -10,10 +10,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const ApiUrl = "https://gogoanime.consumet.org"
-
 func (m UI) getAnimeStreamingURL() tea.Msg {
-	url := fmt.Sprintf(ApiUrl+"/vidcdn/watch/%s", m.episodes[m.currentEpisodeIndex].EpisodeId)
+	url := fmt.Sprintf(constants.ApiUrl+"/vidcdn/watch/%s", m.episodes[m.currentEpisodeIndex].EpisodeId)
 
 	resp, status, err := network.ProcessGet(context.Background(), url, nil)
 	if err != nil {

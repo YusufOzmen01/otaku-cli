@@ -1,9 +1,10 @@
 package details
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/uuid"
 )
@@ -46,9 +47,10 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
-	*constants.AnimeDetails
-	*constants.AnimeResult
+	*styles.AnimeDetails
+	*styles.AnimeResult
 
-	keys Keymap
-	help help.Model
+	keys     Keymap
+	help     help.Model
+	progress progress.Model
 }

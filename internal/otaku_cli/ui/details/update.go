@@ -13,6 +13,13 @@ import (
 
 func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.progress.Width = msg.Width
+		if m.progress.Width > 80 {
+			m.progress.Width = 80
+		}
+		return m, nil
+
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keys.Quit):
@@ -31,7 +38,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			a, err := database.GetAnimeProgress(m.AnimeId)
 			if err == nil {
-				index = a.EpisodeProgress.CurrentEpisodeIndex
+				index = a.EpisodeProgress.CurrentEpisodeNumber
 				pos = a.EpisodeProgress.CurrentPositionInEpisode
 			}
 
@@ -41,7 +48,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				ID:   m.AnimeId,
 				Name: m.AnimeDetails.AnimeTitle,
 				EpisodeProgress: &database.EpisodeProgress{
-					CurrentEpisodeIndex:      index,
+					CurrentEpisodeNumber:     index,
 					MaxEpisodes:              len(m.EpisodesList),
 					CurrentPositionInEpisode: pos,
 				},

@@ -2,6 +2,7 @@ package search_results
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/details"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -19,8 +20,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			items = append(items, list.Item(result))
 		}
 
-		m.list = list.New(items, constants.AnimeResultDelegate{}, 0, 20)
-		m.list.Title = titleStyle.Render("Anime Search Result")
+		m.list = list.New(items, styles.AnimeResultDelegate{}, 0, 20)
+		m.list.Title = "Anime Search Result"
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)
@@ -38,7 +39,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case key.Matches(msg, m.keys.Enter):
-				i, ok := m.list.SelectedItem().(*constants.AnimeResult)
+				i, ok := m.list.SelectedItem().(*styles.AnimeResult)
 				if ok {
 					m.selected = i
 				}

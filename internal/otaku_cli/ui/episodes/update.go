@@ -2,6 +2,7 @@ package episodes
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/episode"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/key"
@@ -20,8 +21,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			items = append(items, list.Item(episode))
 		}
 
-		m.list = list.New(items, constants.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
-		m.list.Title = titleStyle.Render("Episode List")
+		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
+		m.list.Title = "Episode List"
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)
@@ -45,8 +46,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					ID:   m.details.AnimeId,
 					Name: m.details.AnimeTitle,
 					EpisodeProgress: &database.EpisodeProgress{
-						CurrentEpisodeIndex: m.list.Index(),
-						MaxEpisodes:         len(m.episodes),
+						CurrentEpisodeNumber: m.list.Index(),
+						MaxEpisodes:          len(m.episodes),
 					},
 				}
 

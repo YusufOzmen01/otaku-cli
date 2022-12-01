@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/lib/network"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const ApiUrl = "https://gogoanime.consumet.org"
-
 func (m UI) searchAnime() tea.Msg {
-	url := fmt.Sprintf(ApiUrl+"/search?keyw=%s", m.textInput.Value())
+	url := fmt.Sprintf(constants.ApiUrl+"/search?keyw=%s", m.textInput.Value())
 
 	resp, status, err := network.ProcessGet(context.Background(), url, nil)
 	if err != nil {
@@ -23,7 +22,7 @@ func (m UI) searchAnime() tea.Msg {
 		return constants.ErrMsg{Err: fmt.Errorf("server returned %d", status)}
 	}
 
-	data := new([]*constants.AnimeResult)
+	data := new([]*styles.AnimeResult)
 
 	if err := json.Unmarshal(resp, data); err != nil {
 		return constants.ErrMsg{Err: err}

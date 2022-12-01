@@ -2,7 +2,7 @@ package episode
 
 import (
 	"encoding/xml"
-	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -118,9 +118,9 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
-	episodes            []*constants.Episode
+	episodes            []*styles.Episode
 	parentUUID          uuid.UUID
-	details             *constants.AnimeResult
+	details             *styles.AnimeResult
 	currentEpisodeIndex int
 	init                bool
 	episodeLoading      bool
