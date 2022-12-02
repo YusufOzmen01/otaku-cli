@@ -33,16 +33,16 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 	anime := &database.Anime{
 		ID:   m.details.AnimeId,
 		Name: m.details.AnimeTitle,
-		EpisodeProgress: &database.EpisodeProgress{
-			CurrentEpisodeNumber:     episodeIndex,
-			MaxEpisodes:              len(m.episodes),
-			CurrentPositionInEpisode: 0,
-			EpisodeLength:            length,
+		CurrentEpisode: &database.Episode{
+			EpisodeNumber: episodeIndex,
+			Position:      0,
+			EpisodeLength: length,
 		},
-		Finished: finished,
+		MaxEpisodes: len(m.episodes),
+		Finished:    finished,
 	}
 
-	if err := database.WatchAnime(anime); err != nil {
+	if err := database.UpdateAnime(anime); err != nil {
 		panic(err)
 	}
 
@@ -111,18 +111,24 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		anime := &database.Anime{
-			ID:   m.details.AnimeId,
-			Name: m.details.AnimeTitle,
-			EpisodeProgress: &database.EpisodeProgress{
-				CurrentEpisodeNumber:     m.currentEpisodeIndex,
-				MaxEpisodes:              len(m.episodes),
-				CurrentPositionInEpisode: pos,
-				EpisodeLength:            length,
-			},
+		ep := &database.Episode{
+			EpisodeNumber: m.currentEpisodeIndex,
+			Position:      pos,
+			EpisodeLength: length,
 		}
 
-		if err := database.WatchAnime(anime); err != nil {
+		anime := &database.Anime{
+			ID:             m.details.AnimeId,
+			Name:           m.details.AnimeTitle,
+			CurrentEpisode: ep,
+			MaxEpisodes:    len(m.episodes),
+		}
+
+		if err := database.UpdateAnime(anime); err != nil {
+			panic(err)
+		}
+
+		if err := database.UpdateEpisode(ep, m.details.AnimeId); err != nil {
 			panic(err)
 		}
 
@@ -153,12 +159,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		constants.KillProcessByNameWindows("vlc.exe")
 
 		pos := ""
-
-		anime, err := database.GetAnimeProgress(m.details.AnimeId)
+		episode, err := database.GetEpisode(m.currentEpisodeIndex, m.details.AnimeId)
 		if err == nil {
-			if anime.EpisodeProgress.CurrentEpisodeNumber == m.currentEpisodeIndex {
-				pos = "--start-time=" + strconv.Itoa(anime.EpisodeProgress.CurrentPositionInEpisode)
-			}
+			pos = fmt.Sprintf("--start-time=%d", episode.Position)
 		}
 
 		args := []string{msg.Data.Sources[0].File, pos, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000"}

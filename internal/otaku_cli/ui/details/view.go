@@ -16,9 +16,9 @@ func (m UI) View() string {
 
 	anime, err := database.GetAnimeProgress(m.AnimeResult.AnimeId)
 	if err == nil {
-		currentEpisode = float64(anime.EpisodeProgress.CurrentEpisodeNumber + 1)
-		position = float64(anime.EpisodeProgress.CurrentPositionInEpisode)
-		length = float64(anime.EpisodeProgress.EpisodeLength)
+		currentEpisode = float64(anime.CurrentEpisode.EpisodeNumber + 1)
+		position = float64(anime.CurrentEpisode.Position)
+		length = float64(anime.CurrentEpisode.EpisodeLength)
 	}
 
 	//data += lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%s\n", m.AnimeDetails.AnimeTitle))

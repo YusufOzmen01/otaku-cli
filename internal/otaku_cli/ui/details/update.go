@@ -38,8 +38,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			a, err := database.GetAnimeProgress(m.AnimeId)
 			if err == nil {
-				index = a.EpisodeProgress.CurrentEpisodeNumber
-				pos = a.EpisodeProgress.CurrentPositionInEpisode
+				index = a.CurrentEpisode.EpisodeNumber
+				pos = a.CurrentEpisode.Position
 			}
 
 			ui := episode.NewUI(m.UUID, m.EpisodesList, index, m.AnimeResult)
@@ -47,14 +47,14 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			anime := &database.Anime{
 				ID:   m.AnimeId,
 				Name: m.AnimeDetails.AnimeTitle,
-				EpisodeProgress: &database.EpisodeProgress{
-					CurrentEpisodeNumber:     index,
-					MaxEpisodes:              len(m.EpisodesList),
-					CurrentPositionInEpisode: pos,
+				CurrentEpisode: &database.Episode{
+					EpisodeNumber: index,
+					Position:      pos,
 				},
+				MaxEpisodes: len(m.EpisodesList),
 			}
 
-			if err := database.WatchAnime(anime); err != nil {
+			if err := database.UpdateAnime(anime); err != nil {
 				panic(err)
 			}
 

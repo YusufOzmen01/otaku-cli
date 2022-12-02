@@ -45,13 +45,13 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				anime := &database.Anime{
 					ID:   m.details.AnimeId,
 					Name: m.details.AnimeTitle,
-					EpisodeProgress: &database.EpisodeProgress{
-						CurrentEpisodeNumber: m.list.Index(),
-						MaxEpisodes:          len(m.episodes),
+					CurrentEpisode: &database.Episode{
+						EpisodeNumber: m.list.Index(),
 					},
+					MaxEpisodes: len(m.episodes),
 				}
 
-				if err := database.WatchAnime(anime); err != nil {
+				if err := database.UpdateAnime(anime); err != nil {
 					panic(err)
 				}
 

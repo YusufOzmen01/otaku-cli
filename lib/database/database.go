@@ -50,7 +50,7 @@ func GetData(key string) ([]byte, error) {
 	return DB.Get([]byte(key))
 }
 
-func WatchAnime(anime *Anime) error {
+func UpdateAnime(anime *Anime) error {
 	key := fmt.Sprintf("a[%s]", anime.ID)
 
 	a, err := GetData(key)
@@ -60,16 +60,34 @@ func WatchAnime(anime *Anime) error {
 			return err
 		}
 
-		if data.EpisodeProgress.CurrentEpisodeNumber > anime.EpisodeProgress.CurrentEpisodeNumber {
+		if data.CurrentEpisode.EpisodeNumber > anime.CurrentEpisode.EpisodeNumber {
 			return nil
 		}
 
-		if data.EpisodeProgress.CurrentPositionInEpisode > anime.EpisodeProgress.CurrentPositionInEpisode && data.EpisodeProgress.CurrentEpisodeNumber == anime.EpisodeProgress.CurrentEpisodeNumber {
-			anime.EpisodeProgress.CurrentPositionInEpisode = data.EpisodeProgress.CurrentPositionInEpisode
+		if data.CurrentEpisode.Position > anime.CurrentEpisode.Position && data.CurrentEpisode.EpisodeNumber == anime.CurrentEpisode.EpisodeNumber {
+			anime.CurrentEpisode.Position = data.CurrentEpisode.Position
 		}
 	}
 
 	return UpsertData(key, anime)
+}
+
+func UpdateEpisode(episode *Episode, animeID string) error {
+	return UpsertData(fmt.Sprintf("e[%s,%d]", animeID, episode.EpisodeNumber), episode)
+}
+
+func GetEpisode(episodeNumber int, animeID string) (*Episode, error) {
+	episode, err := GetData(fmt.Sprintf("e[%s,%d]", animeID, episodeNumber))
+	if err != nil {
+		return nil, err
+	}
+
+	data := new(Episode)
+	if err := json.Unmarshal(episode, data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
 func GetAnimeProgress(animeID string) (*Anime, error) {

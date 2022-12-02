@@ -1,15 +1,15 @@
 package database
 
-type EpisodeProgress struct {
-	CurrentEpisodeNumber     int
-	MaxEpisodes              int
-	CurrentPositionInEpisode int
-	EpisodeLength            int
+type Episode struct {
+	EpisodeNumber int
+	Position      int
+	EpisodeLength int
 }
 
 type Anime struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	Finished        bool
-	EpisodeProgress *EpisodeProgress
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	Finished       bool
+	CurrentEpisode *Episode
+	MaxEpisodes    int
 }
