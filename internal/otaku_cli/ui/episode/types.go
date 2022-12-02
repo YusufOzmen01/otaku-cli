@@ -5,6 +5,7 @@ import (
 	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/uuid"
 )
@@ -124,8 +125,11 @@ type UI struct {
 	currentEpisodeIndex int
 	init                bool
 	episodeLoading      bool
+	receivedData        bool
 	currentVLCData      *Root
 
-	keys Keymap
-	help help.Model
+	keys      Keymap
+	help      help.Model
+	progress1 progress.Model
+	progress2 progress.Model
 }

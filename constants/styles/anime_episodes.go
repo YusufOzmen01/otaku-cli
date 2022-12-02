@@ -57,11 +57,11 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 			panic(err)
 		}
 
-		if num1-1 < lastWatched.EpisodeProgress.CurrentEpisodeNumber {
+		if num1-1 < lastWatched.EpisodeProgress.CurrentEpisodeNumber || lastWatched.Finished {
 			str = WatchedStyle.Render(str)
 		}
 
-		if num1-1 == lastWatched.EpisodeProgress.CurrentEpisodeNumber {
+		if num1-1 == lastWatched.EpisodeProgress.CurrentEpisodeNumber && !lastWatched.Finished {
 			str += " " + lipgloss.NewStyle().Italic(true).Bold(true).Render("<- Currently on this episode")
 		}
 	}

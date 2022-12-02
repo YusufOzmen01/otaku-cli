@@ -36,8 +36,10 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		EpisodeProgress: &database.EpisodeProgress{
 			CurrentEpisodeNumber:     episodeIndex,
 			MaxEpisodes:              len(m.episodes),
-			CurrentPositionInEpisode: length,
+			CurrentPositionInEpisode: 0,
+			EpisodeLength:            length,
 		},
+		Finished: finished,
 	}
 
 	if err := database.WatchAnime(anime); err != nil {
@@ -61,19 +63,6 @@ func (m UI) PreviousEpisode() (tea.Model, tea.Cmd) {
 	}
 
 	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex-1, m.details)
-
-	anime := &database.Anime{
-		ID:   m.details.AnimeId,
-		Name: m.details.AnimeTitle,
-		EpisodeProgress: &database.EpisodeProgress{
-			CurrentEpisodeNumber: m.currentEpisodeIndex - 1,
-			MaxEpisodes:          len(m.episodes),
-		},
-	}
-
-	if err := database.WatchAnime(anime); err != nil {
-		panic(err)
-	}
 
 	return constants.SwitchUI(m, ui, ui.UUID)
 }
@@ -109,13 +98,17 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				panic(err)
 			}
 
-			if posM > 0 && pos == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text {
+			if posM > 0 && pos == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text && m.receivedData {
 				return constants.ReturnUI(m.parentUUID)
 			}
 		}
 
-		if length > 0 && pos+1 >= length {
-			return m.NextEpisode()
+		if length > 0 {
+			m.receivedData = true
+
+			if pos+1 >= length {
+				return m.NextEpisode()
+			}
 		}
 
 		anime := &database.Anime{
