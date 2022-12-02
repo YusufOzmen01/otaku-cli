@@ -1,6 +1,9 @@
 package search
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/constants/styles"
+)
 
 func (m UI) View() string {
 	if m.loading {
@@ -11,5 +14,5 @@ func (m UI) View() string {
 		return fmt.Sprintf("Nothing found. Please try again")
 	}
 
-	return titleStyle.Render("Search Anime") + "\n\n" + textStyle.Render(m.textInput.View())
+	return styles.TitleStyle.Render("Search Anime") + "\n\n" + styles.DetailStyle.Render(m.textInput.View())
 }

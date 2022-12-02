@@ -22,7 +22,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
-		m.list.Title = "Episode List"
+		m.list.Title = styles.TitleStyle.Render("Episode List")
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)

@@ -5,7 +5,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
 )
 
@@ -20,11 +19,6 @@ var keys = Keymap{
 	Quit: key.NewBinding(
 		key.WithKeys("esc")),
 }
-
-var (
-	titleStyle = lipgloss.NewStyle().Background(lipgloss.Color("#007700"))
-	textStyle  = lipgloss.NewStyle().Bold(true).Italic(true).MarginLeft(2)
-)
 
 type UI struct {
 	tea.Model

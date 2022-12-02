@@ -21,7 +21,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		m.list = list.New(items, styles.AnimeResultDelegate{}, 0, 20)
-		m.list.Title = "Anime Search Result"
+		m.list.Title = styles.TitleStyle.Render("Anime Search Result")
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)

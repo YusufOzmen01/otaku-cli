@@ -3,7 +3,7 @@ package styles
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	SelectionStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#00dd00"))
+	SelectionStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#00dd00")).PaddingLeft(2)
 	TitleStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("#00dd00")).Bold(true)
 
 	OngoingStyle   = lipgloss.NewStyle().Italic(true).Foreground(lipgloss.Color("#cbcf0e"))

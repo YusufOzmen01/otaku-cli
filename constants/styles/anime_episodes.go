@@ -69,7 +69,7 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 	fn := lipgloss.NewStyle().PaddingLeft(4).Render
 	if index == m.Index() {
 		fn = func(str string) string {
-			return SelectionStyle.Render(str)
+			return SelectionStyle.Render("→ " + str)
 		}
 	}
 
