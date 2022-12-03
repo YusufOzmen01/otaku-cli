@@ -132,11 +132,9 @@ func GetAllAnimes() ([]*Anime, error) {
 		}
 
 		anime := new(Anime)
-		if err := json.Unmarshal(value, anime); err != nil {
-			return nil, err
+		if err := json.Unmarshal(value, anime); err == nil {
+			animeList = append(animeList, anime)
 		}
-
-		animeList = append(animeList, anime)
 	}
 
 	return animeList, nil

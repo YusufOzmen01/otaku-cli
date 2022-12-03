@@ -17,11 +17,15 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 
 	episodeIndex := m.currentEpisodeIndex + 1
 	finished := false
+	done := true
 	pos := 0
 
 	if episodeIndex == len(m.episodes) {
 		episodeIndex--
-		finished = true
+		done = true
+		if m.details.Status == "Completed" {
+			finished = true
+		}
 
 		time, err := strconv.Atoi(m.currentVLCData.Time)
 		if err != nil {
@@ -54,7 +58,7 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		panic(err)
 	}
 
-	if finished {
+	if done {
 		return constants.ReturnUI(m.UUID)
 	}
 

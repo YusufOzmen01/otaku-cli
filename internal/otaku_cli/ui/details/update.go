@@ -35,7 +35,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					Length:   1,
 				},
 				MaxEpisodes: len(m.EpisodesList),
-				Finished:    true,
+				Finished:    m.AnimeDetails.Status == "Completed",
 			}
 
 			if err := database.UpdateAnime(anime); err != nil {
