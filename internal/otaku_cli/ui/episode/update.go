@@ -3,6 +3,7 @@ package episode
 import (
 	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
+	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -84,7 +85,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.init = true
 		m.episodeLoading = true
 
-		return m, m.getAnimeStreamingURL
+		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].EpisodeId)
 	}
 
 	switch msg := msg.(type) {

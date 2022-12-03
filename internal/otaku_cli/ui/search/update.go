@@ -3,7 +3,7 @@ package search
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/search_results"
-	"github.com/YusufOzmen01/otaku-cli/lib/generic_cmds"
+	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"time"
@@ -26,7 +26,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Enter):
 			m.loading = true
 
-			return m, m.searchAnime
+			return m, cmds.SearchAnime(m.textInput.Value())
 
 		case key.Matches(msg, m.keys.GoBack):
 			return constants.ReturnUI(m.UUID)
@@ -51,7 +51,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if len(msg.Data) == 0 {
 			m.nothing = true
 
-			return m, generic_cmds.Wait(time.Second * 2)
+			return m, cmds.Wait(time.Second * 2)
 		}
 
 		m.switched = true

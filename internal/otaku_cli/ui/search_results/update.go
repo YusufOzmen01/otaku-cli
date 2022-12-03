@@ -4,6 +4,7 @@ import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/details"
+	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -46,7 +47,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				m.loading = true
 
-				return m, m.getAnimeDetails
+				return m, cmds.GetAnimeDetails(i.AnimeId)
 
 			case key.Matches(msg, m.keys.Return):
 				return constants.ReturnUI(m.UUID)
