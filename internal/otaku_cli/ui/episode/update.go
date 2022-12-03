@@ -17,10 +17,18 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 
 	episodeIndex := m.currentEpisodeIndex + 1
 	finished := false
+	pos := 0
 
 	if episodeIndex == len(m.episodes) {
 		episodeIndex--
 		finished = true
+
+		time, err := strconv.Atoi(m.currentVLCData.Time)
+		if err != nil {
+			panic(err)
+		}
+
+		pos = time
 	}
 
 	ui := NewUI(m.parentUUID, m.episodes, episodeIndex, m.details)
@@ -34,9 +42,9 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		ID:   m.details.AnimeId,
 		Name: m.details.AnimeTitle,
 		CurrentEpisode: &database.Episode{
-			EpisodeNumber: episodeIndex,
-			Position:      0,
-			EpisodeLength: length,
+			Number:   episodeIndex,
+			Position: pos,
+			Length:   length,
 		},
 		MaxEpisodes: len(m.episodes),
 		Finished:    finished,
@@ -93,12 +101,12 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		if m.currentVLCData != nil {
-			posM, err := strconv.Atoi(m.currentVLCData.Time)
+			lengthM, err := strconv.Atoi(m.currentVLCData.Length)
 			if err != nil {
 				panic(err)
 			}
 
-			if posM > 0 && pos == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text && m.receivedData {
+			if lengthM > 0 && length == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text && m.receivedData {
 				return constants.ReturnUI(m.parentUUID)
 			}
 		}
@@ -112,9 +120,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		ep := &database.Episode{
-			EpisodeNumber: m.currentEpisodeIndex,
-			Position:      pos,
-			EpisodeLength: length,
+			Number:   m.currentEpisodeIndex,
+			Position: pos,
+			Length:   length,
 		}
 
 		anime := &database.Anime{
@@ -159,7 +167,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		constants.KillProcessByNameWindows("vlc.exe")
 
 		pos := ""
-		episode, err := database.GetEpisode(m.currentEpisodeIndex, m.details.AnimeId)
+		episode, err := database.GetEpisodeProgress(m.currentEpisodeIndex, m.details.AnimeId)
 		if err == nil {
 			pos = fmt.Sprintf("--start-time=%d", episode.Position)
 		}

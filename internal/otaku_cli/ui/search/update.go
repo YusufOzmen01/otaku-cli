@@ -20,12 +20,15 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, m.keys.Quit):
+			return m, tea.Quit
+
 		case key.Matches(msg, m.keys.Enter):
 			m.loading = true
 
 			return m, m.searchAnime
 
-		case key.Matches(msg, m.keys.Quit):
+		case key.Matches(msg, m.keys.GoBack):
 			return constants.ReturnUI(m.UUID)
 
 		default:

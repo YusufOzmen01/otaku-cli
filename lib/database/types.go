@@ -1,9 +1,9 @@
 package database
 
 type Episode struct {
-	EpisodeNumber int
-	Position      int
-	EpisodeLength int
+	Number   int
+	Position int
+	Length   int
 }
 
 type Anime struct {

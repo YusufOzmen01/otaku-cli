@@ -18,8 +18,8 @@ func NewUI(parentUUID uuid.UUID, episodes []*styles.Episode, currentEpisodeIndex
 		help:                help.New(),
 		UUID:                uuid.New(),
 		details:             details,
-		progress1:           progress.New(progress.WithScaledGradient("#024f0d", "#05a11b")),
-		progress2:           progress.New(progress.WithScaledGradient("#676907", "#cbcf0e")),
+		progress1:           progress.New(progress.WithScaledGradient("#024f0d", "#05a11b"), progress.WithoutPercentage()),
+		progress2:           progress.New(progress.WithScaledGradient("#676907", "#cbcf0e"), progress.WithoutPercentage()),
 	}
 }
 

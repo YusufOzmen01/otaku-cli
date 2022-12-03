@@ -2,7 +2,9 @@ package styles
 
 import (
 	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"io"
@@ -50,7 +52,38 @@ func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listIt
 		return
 	}
 
-	str := fmt.Sprintf("%d. %s", index+1, i.Title())
+	current, max := 0.0, 0.1
+
+	size := 0
+	for _, item := range m.Items() {
+		if len(item.(*AnimeResult).AnimeTitle) > size {
+			size = len(item.(*AnimeResult).AnimeTitle)
+		}
+	}
+
+	str := fmt.Sprintf("%s", i.Title())
+
+	progressBar := progress.New(progress.WithScaledGradient("#024f0d", "#05a11b"), progress.WithoutPercentage(), progress.WithWidth(20))
+	for j := 0; j < size-len(i.AnimeTitle)+1; j++ {
+		str += " "
+	}
+
+	anime, err := database.GetAnimeProgress(i.AnimeId)
+	if err == nil {
+		current = float64(anime.CurrentEpisode.Number) + 1
+		max = float64(anime.MaxEpisodes)
+	}
+
+	str += fmt.Sprintf(" %s %d/%d", progressBar.ViewAs(current/max), int(current), int(max))
+
+	a, err := database.GetAnimeProgress(i.AnimeId)
+	if err == nil {
+		if a.Finished {
+			str = CompletedStyle.Render(str)
+		} else {
+			str = OngoingStyle.Render(str)
+		}
+	}
 
 	fn := lipgloss.NewStyle().PaddingLeft(4).Render
 	if index == m.Index() {
@@ -59,7 +92,7 @@ func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listIt
 		}
 	}
 
-	_, err := fmt.Fprint(w, fn(str))
+	_, err = fmt.Fprint(w, fn(str))
 	if err != nil {
 		return
 	}

@@ -9,15 +9,18 @@ import (
 )
 
 type Keymap struct {
-	Enter key.Binding
-	Quit  key.Binding
+	Enter  key.Binding
+	GoBack key.Binding
+	Quit   key.Binding
 }
 
 var keys = Keymap{
 	Enter: key.NewBinding(
 		key.WithKeys("enter")),
-	Quit: key.NewBinding(
+	GoBack: key.NewBinding(
 		key.WithKeys("esc")),
+	Quit: key.NewBinding(
+		key.WithKeys("ctrl+c")),
 }
 
 type UI struct {

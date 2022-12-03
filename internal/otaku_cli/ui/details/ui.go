@@ -15,7 +15,7 @@ func NewUI(details *styles.AnimeDetails, result *styles.AnimeResult) UI {
 		keys:         keys,
 		help:         help.New(),
 		UUID:         uuid.New(),
-		progress:     progress.New(progress.WithScaledGradient("#024f0d", "#05a11b")),
+		progress:     progress.New(progress.WithScaledGradient("#024f0d", "#05a11b"), progress.WithoutPercentage()),
 	}
 }
 

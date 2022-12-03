@@ -35,12 +35,12 @@ var (
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Next, k.GoBack, k.Previous}
+	return []key.Binding{k.Previous, k.Next, k.GoBack}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Next, k.GoBack, k.Previous},
+		{k.Previous, k.Next, k.GoBack},
 	}
 }
 

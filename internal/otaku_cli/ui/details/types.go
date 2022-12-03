@@ -11,6 +11,8 @@ import (
 
 type Keymap struct {
 	Watch       key.Binding
+	Finished    key.Binding
+	Reset       key.Binding
 	EpisodeList key.Binding
 	GoBack      key.Binding
 	Quit        key.Binding
@@ -20,26 +22,31 @@ var (
 	keys = Keymap{
 		Watch: key.NewBinding(
 			key.WithKeys("w"),
-			key.WithHelp("w", "start watching/continue watching where you left off")),
+			key.WithHelp("w", "start watching")),
+		Finished: key.NewBinding(
+			key.WithKeys("f"),
+			key.WithHelp("f", "mark as finished")),
+		Reset: key.NewBinding(
+			key.WithKeys("r"),
+			key.WithHelp("r", "reset progress")),
 		EpisodeList: key.NewBinding(
 			key.WithKeys("e"),
-			key.WithHelp("e", "episode list")),
+			key.WithHelp("e", "episodes")),
 		GoBack: key.NewBinding(
 			key.WithKeys("q"),
 			key.WithHelp("q", "go back")),
 		Quit: key.NewBinding(
-			key.WithKeys("ctrl+c"),
-			key.WithHelp("ctrl+c", "quit the app")),
+			key.WithKeys("ctrl+c")),
 	}
 )
 
 func (k Keymap) ShortHelp() []key.Binding {
-	return []key.Binding{k.EpisodeList, k.GoBack, k.Watch}
+	return []key.Binding{k.GoBack, k.EpisodeList, k.Watch, k.Finished, k.Reset}
 }
 
 func (k Keymap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.EpisodeList, k.GoBack, k.Watch},
+		{k.GoBack, k.EpisodeList, k.Watch, k.Finished, k.Reset},
 	}
 }
 

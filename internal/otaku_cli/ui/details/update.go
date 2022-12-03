@@ -25,6 +25,34 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Quit):
 			return m, tea.Quit
 
+		case key.Matches(msg, m.keys.Finished):
+			anime := &database.Anime{
+				ID:   m.AnimeId,
+				Name: m.AnimeDetails.AnimeTitle,
+				CurrentEpisode: &database.Episode{
+					Number:   len(m.AnimeDetails.EpisodesList) - 1,
+					Position: 1,
+					Length:   1,
+				},
+				MaxEpisodes: len(m.EpisodesList),
+				Finished:    true,
+			}
+
+			if err := database.UpdateAnime(anime); err != nil {
+				panic(err)
+			}
+
+			return m, nil
+
+		case key.Matches(msg, m.keys.Reset):
+			_, err := database.GetAnimeProgress(m.AnimeId)
+			if err == nil {
+				if err := database.ResetAnimeProgress(m.AnimeId, len(m.AnimeDetails.EpisodesList)); err != nil {
+					panic(err)
+				}
+			}
+
+			return m, nil
 		case key.Matches(msg, m.keys.EpisodeList):
 			ui := episodes.NewUI(m.EpisodesList, m.AnimeResult)
 
@@ -38,7 +66,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			a, err := database.GetAnimeProgress(m.AnimeId)
 			if err == nil {
-				index = a.CurrentEpisode.EpisodeNumber
+				index = a.CurrentEpisode.Number
 				pos = a.CurrentEpisode.Position
 			}
 
@@ -48,8 +76,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				ID:   m.AnimeId,
 				Name: m.AnimeDetails.AnimeTitle,
 				CurrentEpisode: &database.Episode{
-					EpisodeNumber: index,
-					Position:      pos,
+					Number:   index,
+					Position: pos,
 				},
 				MaxEpisodes: len(m.EpisodesList),
 			}

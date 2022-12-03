@@ -60,11 +60,11 @@ func UpdateAnime(anime *Anime) error {
 			return err
 		}
 
-		if data.CurrentEpisode.EpisodeNumber > anime.CurrentEpisode.EpisodeNumber {
+		if data.CurrentEpisode.Number > anime.CurrentEpisode.Number {
 			return nil
 		}
 
-		if data.CurrentEpisode.Position > anime.CurrentEpisode.Position && data.CurrentEpisode.EpisodeNumber == anime.CurrentEpisode.EpisodeNumber {
+		if data.CurrentEpisode.Position > anime.CurrentEpisode.Position && data.CurrentEpisode.Number == anime.CurrentEpisode.Number {
 			anime.CurrentEpisode.Position = data.CurrentEpisode.Position
 		}
 	}
@@ -73,10 +73,10 @@ func UpdateAnime(anime *Anime) error {
 }
 
 func UpdateEpisode(episode *Episode, animeID string) error {
-	return UpsertData(fmt.Sprintf("e[%s,%d]", animeID, episode.EpisodeNumber), episode)
+	return UpsertData(fmt.Sprintf("e[%s,%d]", animeID, episode.Number), episode)
 }
 
-func GetEpisode(episodeNumber int, animeID string) (*Episode, error) {
+func GetEpisodeProgress(episodeNumber int, animeID string) (*Episode, error) {
 	episode, err := GetData(fmt.Sprintf("e[%s,%d]", animeID, episodeNumber))
 	if err != nil {
 		return nil, err
@@ -102,6 +102,20 @@ func GetAnimeProgress(animeID string) (*Anime, error) {
 	}
 
 	return data, nil
+}
+
+func ResetAnimeProgress(animeID string, episodeCount int) error {
+	if err := DB.Delete([]byte(fmt.Sprintf("a[%s]", animeID))); err != nil {
+		return err
+	}
+
+	for i := 0; i < episodeCount; i++ {
+		if err := DB.Delete([]byte(fmt.Sprintf("e[%s,%d]", animeID, i))); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func GetAllAnimes() ([]*Anime, error) {

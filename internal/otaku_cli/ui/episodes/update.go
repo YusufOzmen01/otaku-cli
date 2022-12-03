@@ -46,7 +46,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					ID:   m.details.AnimeId,
 					Name: m.details.AnimeTitle,
 					CurrentEpisode: &database.Episode{
-						EpisodeNumber: m.list.Index(),
+						Number: m.list.Index(),
 					},
 					MaxEpisodes: len(m.episodes),
 				}

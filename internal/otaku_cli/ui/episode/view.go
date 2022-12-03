@@ -37,12 +37,12 @@ func (m UI) View() string {
 		data += styles.CompletedStyle.Render("Playing")
 	}
 
-	data += styles.DetailStyle.Render(fmt.Sprintf("\nEpisode: ")) + m.progress1.ViewAs(currentEpisode/maxEpisodes) + fmt.Sprintf(" | %d/%d", int(currentEpisode), int(maxEpisodes))
+	data += styles.DetailStyle.Render(fmt.Sprintf("\nEpisode: ")) + m.progress1.ViewAs(currentEpisode/maxEpisodes) + fmt.Sprintf(" %d/%d", int(currentEpisode), int(maxEpisodes))
 	data += styles.DetailStyle.Render(fmt.Sprintf("\nPosition: "))
 	if m.currentVLCData == nil || m.currentVLCData.State == "playing" {
-		data += m.progress1.ViewAs(pos/length) + fmt.Sprintf(" | %s/%s", time.Time{}.Add(time.Duration(pos)*time.Second).Format("04:05"), time.Time{}.Add(time.Duration(length)*time.Second).Format("04:05"))
+		data += m.progress1.ViewAs(pos/length) + fmt.Sprintf(" %s/%s", time.Time{}.Add(time.Duration(pos)*time.Second).Format("04:05"), time.Time{}.Add(time.Duration(length)*time.Second).Format("04:05"))
 	} else if m.currentVLCData.State == "paused" {
-		data += m.progress2.ViewAs(pos/length) + fmt.Sprintf(" | %s/%s", time.Time{}.Add(time.Duration(pos)*time.Second).Format("04:05"), time.Time{}.Add(time.Duration(length)*time.Second).Format("04:05"))
+		data += m.progress2.ViewAs(pos/length) + fmt.Sprintf(" %s/%s", time.Time{}.Add(time.Duration(pos)*time.Second).Format("04:05"), time.Time{}.Add(time.Duration(length)*time.Second).Format("04:05"))
 	}
 
 	return data + "\n\n" + m.help.View(m.keys)
