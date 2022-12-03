@@ -3,6 +3,7 @@ package search
 import (
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/search_results"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,9 +45,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.httpErr = msg.Err
 		return m, tea.Quit
 
-	case constants.ResultMsg:
+	case anime.ResultMsg:
 		m.httpErr = nil
-		m.loading = false
 
 		if len(msg.Data) == 0 {
 			m.nothing = true
@@ -54,10 +54,17 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmds.Wait(time.Second * 2)
 		}
 
-		m.switched = true
-		m.textInput.SetValue("")
+		m.searchDone = true
 
-		ui := search_results.NewUI(msg.Data)
+		return m, updateAnimes(msg.Data)
+
+	case anime.SearchDoneMsg:
+		m.switched = true
+		m.loading = false
+		m.searchDone = false
+
+		ui := search_results.NewUI(msg.Data, m.textInput.Value())
+		m.textInput.SetValue("")
 
 		return constants.SwitchUI(m, ui, ui.UUID)
 

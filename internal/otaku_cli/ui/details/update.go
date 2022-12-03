@@ -28,17 +28,17 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Finished):
 			anime := &database.Anime{
 				ID:   m.AnimeId,
-				Name: m.AnimeDetails.AnimeTitle,
+				Name: m.Details.AnimeTitle,
 				CurrentEpisode: &database.Episode{
-					Number:   len(m.AnimeDetails.EpisodesList) - 1,
+					Number:   len(m.Details.EpisodesList) - 1,
 					Position: 1,
 					Length:   1,
 				},
 				MaxEpisodes: len(m.EpisodesList),
-				Finished:    m.AnimeDetails.Status == "Completed",
+				Finished:    m.Details.Status == "Completed",
 			}
 
-			if err := database.UpdateAnime(anime); err != nil {
+			if err := database.UpdateAnimeTracking(anime); err != nil {
 				panic(err)
 			}
 
@@ -47,14 +47,14 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Reset):
 			_, err := database.GetAnimeProgress(m.AnimeId)
 			if err == nil {
-				if err := database.ResetAnimeProgress(m.AnimeId, len(m.AnimeDetails.EpisodesList)); err != nil {
+				if err := database.ResetAnimeProgress(m.AnimeId, len(m.Details.EpisodesList)); err != nil {
 					panic(err)
 				}
 			}
 
 			return m, nil
 		case key.Matches(msg, m.keys.EpisodeList):
-			ui := episodes.NewUI(m.EpisodesList, m.AnimeResult)
+			ui := episodes.NewUI(m.EpisodesList, m.Result)
 
 			return constants.SwitchUI(m, ui, ui.UUID)
 
@@ -70,11 +70,11 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				pos = a.CurrentEpisode.Position
 			}
 
-			ui := episode.NewUI(m.UUID, m.EpisodesList, index, m.AnimeResult)
+			ui := episode.NewUI(m.UUID, m.EpisodesList, index, m.Result)
 
 			anime := &database.Anime{
 				ID:   m.AnimeId,
-				Name: m.AnimeDetails.AnimeTitle,
+				Name: m.Details.AnimeTitle,
 				CurrentEpisode: &database.Episode{
 					Number:   index,
 					Position: pos,
@@ -82,14 +82,14 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				MaxEpisodes: len(m.EpisodesList),
 			}
 
-			if err := database.UpdateAnime(anime); err != nil {
+			if err := database.UpdateAnimeTracking(anime); err != nil {
 				panic(err)
 			}
 
 			return constants.SwitchUI(m, ui, ui.UUID)
 		}
 
-	case constants.StreamResultData:
+	case constants.StreamingUrlsMsg:
 		err := exec.Command("vlc", msg.Data.Sources[0].File).Start()
 		if err != nil {
 			return m, tea.Quit

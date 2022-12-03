@@ -14,7 +14,7 @@ func (m UI) View() string {
 	length := 1.0
 	data := ""
 
-	anime, err := database.GetAnimeProgress(m.AnimeResult.AnimeId)
+	anime, err := database.GetAnimeProgress(m.Result.AnimeId)
 	if err == nil {
 		currentEpisode = float64(anime.CurrentEpisode.Number + 1)
 		position = float64(anime.CurrentEpisode.Position)
@@ -22,17 +22,17 @@ func (m UI) View() string {
 	}
 
 	data += styles.TitleStyle.Render("About the Anime")
-	data += styles.DetailStyle.Render(fmt.Sprintf("\nTitle: %s", m.AnimeDetails.AnimeTitle))
+	data += styles.DetailStyle.Render(fmt.Sprintf("\nTitle: %s", m.Details.AnimeTitle))
 	data += styles.DetailStyle.Render("\nStatus: ")
-	switch m.AnimeDetails.Status {
+	switch m.Details.Status {
 	case "Completed":
-		data += styles.CompletedStyle.Render(m.AnimeDetails.Status)
+		data += styles.CompletedStyle.Render(m.Details.Status)
 	case "Ongoing":
-		data += styles.OngoingStyle.Render(m.AnimeDetails.Status)
+		data += styles.OngoingStyle.Render(m.Details.Status)
 	default:
-		data += styles.DetailStyle.Render(m.AnimeDetails.Status)
+		data += styles.DetailStyle.Render(m.Details.Status)
 	}
-	data += styles.DetailStyle.Render(fmt.Sprintf("\nGenres: %s", strings.Join(m.AnimeDetails.Genres, ",")))
+	data += styles.DetailStyle.Render(fmt.Sprintf("\nGenres: %s", strings.Join(m.Details.Genres, ",")))
 
 	data += styles.TitleStyle.Render("\n\nProgress")
 	data += styles.DetailStyle.Render("\nEpisode: ") + m.progress.ViewAs(currentEpisode/float64(len(m.EpisodesList))) + fmt.Sprintf(" %d/%d", int(currentEpisode), len(m.EpisodesList))

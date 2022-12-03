@@ -7,6 +7,10 @@ import (
 
 func (m UI) View() string {
 	if m.loading {
+		if m.searchDone {
+			return fmt.Sprintf("%s Resolving data...", m.spinner.View())
+		}
+
 		return fmt.Sprintf("%s Searching for \"%s\"", m.spinner.View(), m.textInput.Value())
 	}
 

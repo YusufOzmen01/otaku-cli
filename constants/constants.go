@@ -1,27 +1,13 @@
 package constants
 
-import (
-	"github.com/YusufOzmen01/otaku-cli/constants/styles"
-)
-
-const ApiUrl = "https://gogoanime.consumet.org"
-
 type ErrMsg struct {
 	Err error
-}
-
-type ResultMsg struct {
-	Data []*styles.AnimeResult
-}
-
-type DetailMsg struct {
-	Data *styles.AnimeDetails
 }
 
 type WaitMsg struct {
 }
 
-type StreamResultData struct {
+type StreamingUrlsMsg struct {
 	Data *StreamData
 }
 

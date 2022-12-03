@@ -1,7 +1,7 @@
 package episodes
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants/styles"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -50,12 +50,12 @@ type UI struct {
 	tea.Model
 	UUID uuid.UUID
 
-	details *styles.AnimeResult
+	details *anime.Result
 
 	keys Keymap
 	help help.Model
 	list list.Model
 
 	init     bool
-	episodes []*styles.Episode
+	episodes []*anime.Episode
 }

@@ -1,6 +1,7 @@
 package episodes
 
 import (
+	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/episode"
@@ -22,7 +23,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
-		m.list.Title = styles.TitleStyle.Render("Episode List")
+		m.list.Title = fmt.Sprintf("%s\n%s",
+			styles.TitleStyle.Render("Episode List"),
+			fmt.Sprintf("Found %d episodes for \"%s\"\nNote: Episode length will be 0 until you watch that episode.\nIt's a problem related to api.", len(m.episodes), m.details.AnimeTitle))
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)
@@ -51,7 +54,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					MaxEpisodes: len(m.episodes),
 				}
 
-				if err := database.UpdateAnime(anime); err != nil {
+				if err := database.UpdateAnimeTracking(anime); err != nil {
 					panic(err)
 				}
 

@@ -1,9 +1,11 @@
 package search_results
 
 import (
+	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/constants/styles"
 	"github.com/YusufOzmen01/otaku-cli/internal/otaku_cli/ui/details"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -22,7 +24,9 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		m.list = list.New(items, styles.AnimeResultDelegate{}, 0, 20)
-		m.list.Title = styles.TitleStyle.Render("Anime Search Result")
+		m.list.Title = fmt.Sprintf("%s\n%s",
+			styles.TitleStyle.Render("Anime Search Result"),
+			fmt.Sprintf("Found %d results for \"%s\"", len(m.Results), m.SearchText))
 		m.list.SetShowStatusBar(true)
 		m.list.SetFilteringEnabled(true)
 		m.list.Styles.Title = lipgloss.NewStyle().MarginLeft(0)
@@ -40,7 +44,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case key.Matches(msg, m.keys.Enter):
-				i, ok := m.list.SelectedItem().(*styles.AnimeResult)
+				i, ok := m.list.SelectedItem().(*anime.Result)
 				if ok {
 					m.selected = i
 				}
@@ -57,7 +61,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-	case constants.DetailMsg:
+	case anime.DetailsMsg:
 		selected := m.selected
 
 		m.loading = false

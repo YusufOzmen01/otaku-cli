@@ -29,10 +29,11 @@ type UI struct {
 	spinner   spinner.Model
 	textInput textinput.Model
 
-	loading  bool
-	nothing  bool
-	switched bool
-	init     bool
+	loading    bool
+	searchDone bool
+	nothing    bool
+	switched   bool
+	init       bool
 
 	httpErr error
 

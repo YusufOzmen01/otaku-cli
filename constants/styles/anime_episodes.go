@@ -2,6 +2,7 @@ package styles
 
 import (
 	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/progress"
@@ -12,24 +13,8 @@ import (
 	"time"
 )
 
-type Episode struct {
-	list.Item
-
-	EpisodeId  string `json:"episodeId"`
-	EpisodeNum string `json:"episodeNum"`
-	EpisodeUrl string `json:"episodeUrl"`
-}
-
 type AnimeEpisodesDelegate struct {
 	AnimeID string
-}
-
-func (i Episode) EpisodeTitle() string {
-	return fmt.Sprintf("Episode %s", i.EpisodeNum)
-}
-
-func (i Episode) FilterValue() string {
-	return i.EpisodeNum
 }
 
 func (d AnimeEpisodesDelegate) Height() int {
@@ -45,7 +30,7 @@ func (d AnimeEpisodesDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd {
 }
 
 func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
-	i, ok := listItem.(*Episode)
+	i, ok := listItem.(*anime.Episode)
 	if !ok {
 		return
 	}
@@ -58,18 +43,18 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	currentEpisode := false
 
-	anime, err := database.GetAnimeProgress(d.AnimeID)
+	data, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
 		num1, err := strconv.Atoi(i.EpisodeNum)
 		if err != nil {
 			panic(err)
 		}
 
-		if num1-1 < anime.CurrentEpisode.Number || anime.Finished {
+		if num1-1 < data.CurrentEpisode.Number || data.Finished {
 			str = WatchedStyle.Render(str)
 		}
 
-		if num1-1 == anime.CurrentEpisode.Number && !anime.Finished {
+		if num1-1 == data.CurrentEpisode.Number && !data.Finished {
 			currentEpisode = true
 		}
 	}
@@ -79,13 +64,13 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 		str += " "
 	}
 
-	if anime != nil {
+	if data != nil {
 		episodeID, err := strconv.Atoi(i.EpisodeNum)
 		if err != nil {
 			panic(err)
 		}
 
-		episode, err := database.GetEpisodeProgress(episodeID-1, anime.ID)
+		episode, err := database.GetEpisodeProgress(episodeID-1, data.ID)
 		if err == nil {
 			pos = float64(episode.Position)
 			length = float64(episode.Length)

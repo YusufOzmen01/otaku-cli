@@ -3,11 +3,19 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/akrylysov/pogreb"
+	"sync"
 )
 
 var (
 	DB *pogreb.DB
+)
+
+const (
+	AnimeTrackingKey   = "anime/tracking/%s"
+	EpisodeTrackingKey = "episode/tracking/%s/%d"
+	AnimeKey           = "anime/details/%s"
 )
 
 func InitializeDatabase(dbPath string) error {
@@ -50,8 +58,8 @@ func GetData(key string) ([]byte, error) {
 	return DB.Get([]byte(key))
 }
 
-func UpdateAnime(anime *Anime) error {
-	key := fmt.Sprintf("a[%s]", anime.ID)
+func UpdateAnimeTracking(anime *Anime) error {
+	key := fmt.Sprintf(AnimeTrackingKey, anime.ID)
 
 	a, err := GetData(key)
 	if err == nil {
@@ -69,15 +77,45 @@ func UpdateAnime(anime *Anime) error {
 		}
 	}
 
+	go UpdateAnimeData(anime.ID, nil)
+
 	return UpsertData(key, anime)
 }
 
+func UpdateAnimeData(id string, wg *sync.WaitGroup) {
+	if wg != nil {
+		defer wg.Done()
+	}
+	key := fmt.Sprintf(AnimeKey, id)
+
+	data, err := anime.GetAnimeDetails(id)
+	if err == nil {
+		if err := UpsertData(key, data); err != nil {
+			return
+		}
+	}
+}
+
+func GetAnimeDetails(id string) (*anime.Details, error) {
+	data, err := GetData(fmt.Sprintf(AnimeKey, id))
+	if err != nil {
+		return nil, err
+	}
+
+	details := new(anime.Details)
+	if err := json.Unmarshal(data, details); err != nil {
+		return nil, err
+	}
+
+	return details, nil
+}
+
 func UpdateEpisode(episode *Episode, animeID string) error {
-	return UpsertData(fmt.Sprintf("e[%s,%d]", animeID, episode.Number), episode)
+	return UpsertData(fmt.Sprintf(EpisodeTrackingKey, animeID, episode.Number), episode)
 }
 
 func GetEpisodeProgress(episodeNumber int, animeID string) (*Episode, error) {
-	episode, err := GetData(fmt.Sprintf("e[%s,%d]", animeID, episodeNumber))
+	episode, err := GetData(fmt.Sprintf(EpisodeTrackingKey, animeID, episodeNumber))
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +129,7 @@ func GetEpisodeProgress(episodeNumber int, animeID string) (*Episode, error) {
 }
 
 func GetAnimeProgress(animeID string) (*Anime, error) {
-	lastWatched, err := GetData(fmt.Sprintf("a[%s]", animeID))
+	lastWatched, err := GetData(fmt.Sprintf(AnimeTrackingKey, animeID))
 	if err != nil {
 		return nil, err
 	}
@@ -105,12 +143,12 @@ func GetAnimeProgress(animeID string) (*Anime, error) {
 }
 
 func ResetAnimeProgress(animeID string, episodeCount int) error {
-	if err := DB.Delete([]byte(fmt.Sprintf("a[%s]", animeID))); err != nil {
+	if err := DB.Delete([]byte(fmt.Sprintf(AnimeTrackingKey, animeID))); err != nil {
 		return err
 	}
 
 	for i := 0; i < episodeCount; i++ {
-		if err := DB.Delete([]byte(fmt.Sprintf("e[%s,%d]", animeID, i))); err != nil {
+		if err := DB.Delete([]byte(fmt.Sprintf(EpisodeTrackingKey, animeID, i))); err != nil {
 			return err
 		}
 	}
@@ -131,9 +169,9 @@ func GetAllAnimes() ([]*Anime, error) {
 			return nil, err
 		}
 
-		anime := new(Anime)
-		if err := json.Unmarshal(value, anime); err == nil {
-			animeList = append(animeList, anime)
+		data := new(Anime)
+		if err := json.Unmarshal(value, data); err == nil {
+			animeList = append(animeList, data)
 		}
 	}
 

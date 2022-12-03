@@ -1,14 +1,14 @@
 package episode
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants/styles"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/google/uuid"
 )
 
-func NewUI(parentUUID uuid.UUID, episodes []*styles.Episode, currentEpisodeIndex int, details *styles.AnimeResult) UI {
+func NewUI(parentUUID uuid.UUID, episodes []*anime.Episode, currentEpisodeIndex int, details *anime.Result) UI {
 
 	return UI{
 		parentUUID:          parentUUID,

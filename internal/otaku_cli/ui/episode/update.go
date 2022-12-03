@@ -55,7 +55,7 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		Finished:    finished,
 	}
 
-	if err := database.UpdateAnime(anime); err != nil {
+	if err := database.UpdateAnimeTracking(anime); err != nil {
 		panic(err)
 	}
 
@@ -137,7 +137,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			MaxEpisodes:    len(m.episodes),
 		}
 
-		if err := database.UpdateAnime(anime); err != nil {
+		if err := database.UpdateAnimeTracking(anime); err != nil {
 			panic(err)
 		}
 
@@ -168,7 +168,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return constants.ReturnUI(m.parentUUID)
 		}
 
-	case constants.StreamResultData:
+	case constants.StreamingUrlsMsg:
 		constants.KillProcessByNameWindows("vlc.exe")
 
 		pos := ""

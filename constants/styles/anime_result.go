@@ -2,6 +2,7 @@ package styles
 
 import (
 	"fmt"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/progress"
@@ -10,29 +11,7 @@ import (
 	"io"
 )
 
-type AnimeResult struct {
-	list.Item
-
-	AnimeId    string `json:"animeId"`
-	AnimeTitle string `json:"animeTitle"`
-	AnimeUrl   string `json:"animeUrl"`
-	AnimeImg   string `json:"animeImg"`
-	Status     string `json:"status"`
-}
-
 type AnimeResultDelegate struct{}
-
-func (i AnimeResult) Title() string {
-	return i.AnimeTitle
-}
-
-func (i AnimeResult) Description() string {
-	return i.AnimeId
-}
-
-func (i AnimeResult) FilterValue() string {
-	return i.AnimeTitle
-}
 
 func (d AnimeResultDelegate) Height() int {
 	return 1
@@ -47,7 +26,7 @@ func (d AnimeResultDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd {
 }
 
 func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
-	i, ok := listItem.(*AnimeResult)
+	i, ok := listItem.(*anime.Result)
 	if !ok {
 		return
 	}
@@ -56,8 +35,8 @@ func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listIt
 
 	size := 0
 	for _, item := range m.Items() {
-		if len(item.(*AnimeResult).AnimeTitle) > size {
-			size = len(item.(*AnimeResult).AnimeTitle)
+		if len(item.(*anime.Result).AnimeTitle) > size {
+			size = len(item.(*anime.Result).AnimeTitle)
 		}
 	}
 
@@ -68,10 +47,14 @@ func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listIt
 		str += " "
 	}
 
-	anime, err := database.GetAnimeProgress(i.AnimeId)
+	data, err := database.GetAnimeProgress(i.AnimeId)
 	if err == nil {
-		current = float64(anime.CurrentEpisode.Number) + 1
-		max = float64(anime.MaxEpisodes)
+		current = float64(data.CurrentEpisode.Number) + 1
+	}
+
+	details, err := database.GetAnimeDetails(i.AnimeId)
+	if err == nil {
+		max = float64(len(details.EpisodesList))
 	}
 
 	str += fmt.Sprintf(" %s %d/%d", progressBar.ViewAs(current/max), int(current), int(max))

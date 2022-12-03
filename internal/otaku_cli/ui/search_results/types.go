@@ -1,7 +1,7 @@
 package search_results
 
 import (
-	"github.com/YusufOzmen01/otaku-cli/constants/styles"
+	"github.com/YusufOzmen01/otaku-cli/lib/anime"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -29,8 +29,9 @@ type UI struct {
 	UUID uuid.UUID
 	list list.Model
 
-	Results  []*styles.AnimeResult
-	selected *styles.AnimeResult
+	SearchText string
+	Results    []*anime.Result
+	selected   *anime.Result
 
 	init     bool
 	switched bool
