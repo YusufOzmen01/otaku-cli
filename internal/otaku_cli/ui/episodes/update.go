@@ -22,7 +22,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			items = append(items, list.Item(episode))
 		}
 
-		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.AnimeId}, 0, 20)
+		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.Id}, 0, 20)
 		m.list.Title = fmt.Sprintf("%s\n%s",
 			styles.TitleStyle.Render("Episode List"),
 			fmt.Sprintf("Found %d episodes for \"%s\"\nNote: Episode length will be 0 until you watch that episode.\nIt's a problem related to api.", len(m.episodes), m.details.AnimeTitle))
@@ -46,8 +46,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				ui := episode.NewUI(m.UUID, m.episodes, m.list.Index(), m.details)
 
 				anime := &database.Anime{
-					ID:   m.details.AnimeId,
-					Name: m.details.AnimeTitle,
+					ID:   m.details.Id,
+					Name: m.details.AnimeTitle.Romaji,
 					CurrentEpisode: &database.Episode{
 						Number: m.list.Index(),
 					},

@@ -51,7 +51,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				m.loading = true
 
-				return m, cmds.GetAnimeDetails(i.AnimeId)
+				return m, cmds.GetAnimeDetails(i.Id)
 
 			case key.Matches(msg, m.keys.Return):
 				return constants.ReturnUI(m.UUID)

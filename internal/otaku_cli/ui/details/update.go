@@ -27,14 +27,14 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keys.Finished):
 			anime := &database.Anime{
-				ID:   m.AnimeId,
-				Name: m.Details.AnimeTitle,
+				ID:   m.Details.Id,
+				Name: m.Details.Title.Romaji,
 				CurrentEpisode: &database.Episode{
-					Number:   len(m.Details.EpisodesList) - 1,
+					Number:   len(m.Details.Episodes) - 1,
 					Position: 1,
 					Length:   1,
 				},
-				MaxEpisodes: len(m.EpisodesList),
+				MaxEpisodes: len(m.Episodes),
 				Finished:    m.Details.Status == "Completed",
 			}
 
@@ -45,16 +45,16 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keys.Reset):
-			_, err := database.GetAnimeProgress(m.AnimeId)
+			_, err := database.GetAnimeProgress(m.Details.Id)
 			if err == nil {
-				if err := database.ResetAnimeProgress(m.AnimeId, len(m.Details.EpisodesList)); err != nil {
+				if err := database.ResetAnimeProgress(m.Details.Id, len(m.Details.Episodes)); err != nil {
 					panic(err)
 				}
 			}
 
 			return m, nil
 		case key.Matches(msg, m.keys.EpisodeList):
-			ui := episodes.NewUI(m.EpisodesList, m.Result)
+			ui := episodes.NewUI(m.Episodes, m.Result)
 
 			return constants.SwitchUI(m, ui, ui.UUID)
 
@@ -64,22 +64,22 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Watch):
 			index, pos := 0, 0
 
-			a, err := database.GetAnimeProgress(m.AnimeId)
+			a, err := database.GetAnimeProgress(m.Details.Id)
 			if err == nil {
 				index = a.CurrentEpisode.Number
 				pos = a.CurrentEpisode.Position
 			}
 
-			ui := episode.NewUI(m.UUID, m.EpisodesList, index, m.Result)
+			ui := episode.NewUI(m.UUID, m.Episodes, index, m.Result)
 
 			anime := &database.Anime{
-				ID:   m.AnimeId,
-				Name: m.Details.AnimeTitle,
+				ID:   m.Details.Id,
+				Name: m.Details.Title.Romaji,
 				CurrentEpisode: &database.Episode{
 					Number:   index,
 					Position: pos,
 				},
-				MaxEpisodes: len(m.EpisodesList),
+				MaxEpisodes: len(m.Episodes),
 			}
 
 			if err := database.UpdateAnimeTracking(anime); err != nil {
@@ -90,7 +90,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case constants.StreamingUrlsMsg:
-		err := exec.Command("vlc", msg.Data.Sources[0].File).Start()
+		err := exec.Command("vlc", msg.Data.Url).Start()
 		if err != nil {
 			return m, tea.Quit
 		}

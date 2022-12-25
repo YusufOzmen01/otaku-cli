@@ -12,7 +12,7 @@ func updateAnimes(results []*anime.Result) tea.Cmd {
 		wg := &sync.WaitGroup{}
 		for _, result := range results {
 			wg.Add(1)
-			go database.UpdateAnimeData(result.AnimeId, wg)
+			go database.UpdateAnimeData(result.Id, wg)
 		}
 
 		wg.Wait()

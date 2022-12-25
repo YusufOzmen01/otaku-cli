@@ -11,22 +11,11 @@ type StreamingUrlsMsg struct {
 	Data *StreamData
 }
 
-type Stream struct {
-	File  string `json:"file"`
-	Label string `json:"label"`
-	Type  string `json:"type"`
-}
-
 type StreamData struct {
-	Referer string `json:"Referer"`
-	Sources []struct {
-		File  string `json:"file"`
-		Label string `json:"label"`
-		Type  string `json:"type"`
-	} `json:"sources"`
-	SourcesBk []struct {
-		File  string `json:"file"`
-		Label string `json:"label"`
-		Type  string `json:"type"`
-	} `json:"sources_bk"`
+	Id       string `json:"id"`
+	Url      string `json:"url"`
+	Referer  string `json:"referer"`
+	Priority int    `json:"priority"`
+	Browser  bool   `json:"browser"`
+	Website  string `json:"website"`
 }

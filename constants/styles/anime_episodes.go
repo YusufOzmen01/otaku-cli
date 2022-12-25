@@ -45,16 +45,15 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 
 	data, err := database.GetAnimeProgress(d.AnimeID)
 	if err == nil {
-		num1, err := strconv.Atoi(i.EpisodeNum)
 		if err != nil {
 			panic(err)
 		}
 
-		if num1-1 < data.CurrentEpisode.Number || data.Finished {
+		if i.EpisodeNum-1 < data.CurrentEpisode.Number || data.Finished {
 			str = WatchedStyle.Render(str)
 		}
 
-		if num1-1 == data.CurrentEpisode.Number && !data.Finished {
+		if i.EpisodeNum == data.CurrentEpisode.Number && !data.Finished {
 			currentEpisode = true
 		}
 	}
@@ -65,12 +64,7 @@ func (d AnimeEpisodesDelegate) Render(w io.Writer, m list.Model, index int, list
 	}
 
 	if data != nil {
-		episodeID, err := strconv.Atoi(i.EpisodeNum)
-		if err != nil {
-			panic(err)
-		}
-
-		episode, err := database.GetEpisodeProgress(episodeID-1, data.ID)
+		episode, err := database.GetEpisodeProgress(i.EpisodeNum-1, data.ID)
 		if err == nil {
 			pos = float64(episode.Position)
 			length = float64(episode.Length)

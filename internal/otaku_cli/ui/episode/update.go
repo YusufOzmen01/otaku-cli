@@ -18,13 +18,13 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 
 	episodeIndex := m.currentEpisodeIndex + 1
 	finished := false
-	done := true
+	done := false
 	pos := 0
 
 	if episodeIndex == len(m.episodes) {
 		episodeIndex--
 		done = true
-		if m.details.Status == "Completed" {
+		if m.details.Status == "FINISHED" {
 			finished = true
 		}
 
@@ -44,8 +44,8 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 	}
 
 	anime := &database.Anime{
-		ID:   m.details.AnimeId,
-		Name: m.details.AnimeTitle,
+		ID:   m.details.Id,
+		Name: m.details.AnimeTitle.Romaji,
 		CurrentEpisode: &database.Episode{
 			Number:   episodeIndex,
 			Position: pos,
@@ -85,7 +85,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.init = true
 		m.episodeLoading = true
 
-		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].EpisodeId)
+		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[0].Id)
 	}
 
 	switch msg := msg.(type) {
@@ -131,8 +131,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		anime := &database.Anime{
-			ID:             m.details.AnimeId,
-			Name:           m.details.AnimeTitle,
+			ID:             m.details.Id,
+			Name:           m.details.AnimeTitle.Romaji,
 			CurrentEpisode: ep,
 			MaxEpisodes:    len(m.episodes),
 		}
@@ -141,7 +141,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			panic(err)
 		}
 
-		if err := database.UpdateEpisode(ep, m.details.AnimeId); err != nil {
+		if err := database.UpdateEpisode(ep, m.details.Id); err != nil {
 			panic(err)
 		}
 
@@ -172,12 +172,12 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		constants.KillProcessByNameWindows("vlc.exe")
 
 		pos := ""
-		episode, err := database.GetEpisodeProgress(m.currentEpisodeIndex, m.details.AnimeId)
+		episode, err := database.GetEpisodeProgress(m.currentEpisodeIndex, m.details.Id)
 		if err == nil {
 			pos = fmt.Sprintf("--start-time=%d", episode.Position)
 		}
 
-		args := []string{msg.Data.Sources[0].File, pos, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000"}
+		args := []string{msg.Data.Url, pos, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000"}
 
 		err = exec.Command("vlc", args...).Start()
 		if err != nil {

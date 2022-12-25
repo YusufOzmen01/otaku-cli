@@ -35,31 +35,31 @@ func (d AnimeResultDelegate) Render(w io.Writer, m list.Model, index int, listIt
 
 	size := 0
 	for _, item := range m.Items() {
-		if len(item.(*anime.Result).AnimeTitle) > size {
-			size = len(item.(*anime.Result).AnimeTitle)
+		if len(item.(*anime.Result).AnimeTitle.Romaji) > size {
+			size = len(item.(*anime.Result).AnimeTitle.Romaji)
 		}
 	}
 
 	str := fmt.Sprintf("%s", i.Title())
 
 	progressBar := progress.New(progress.WithScaledGradient("#024f0d", "#05a11b"), progress.WithoutPercentage(), progress.WithWidth(20))
-	for j := 0; j < size-len(i.AnimeTitle)+1; j++ {
+	for j := 0; j < size-len(i.AnimeTitle.Romaji)+1; j++ {
 		str += " "
 	}
 
-	data, err := database.GetAnimeProgress(i.AnimeId)
+	data, err := database.GetAnimeProgress(i.Id)
 	if err == nil {
 		current = float64(data.CurrentEpisode.Number) + 1
 	}
 
-	details, err := database.GetAnimeDetails(i.AnimeId)
+	details, err := database.GetAnimeDetails(i.Id)
 	if err == nil {
-		max = float64(len(details.EpisodesList))
+		max = float64(len(details.Episodes))
 	}
 
 	str += fmt.Sprintf(" %s %d/%d", progressBar.ViewAs(current/max), int(current), int(max))
 
-	a, err := database.GetAnimeProgress(i.AnimeId)
+	a, err := database.GetAnimeProgress(i.Id)
 	if err == nil {
 		if a.Finished {
 			str = CompletedStyle.Render(str)

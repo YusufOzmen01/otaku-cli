@@ -8,31 +8,12 @@ import (
 	"github.com/YusufOzmen01/otaku-cli/lib/network"
 )
 
-const ApiUrl = "https://gogoanime.consumet.org"
-
-func GetAnimeStreamingUrls(animeId string) (*constants.StreamData, error) {
-	url := fmt.Sprintf(ApiUrl+"/vidcdn/watch/%s", animeId)
-
-	resp, status, err := network.ProcessGet(context.Background(), url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if status != 200 {
-		return nil, fmt.Errorf("server returned %d", status)
-	}
-
-	data := new(constants.StreamData)
-
-	if err := json.Unmarshal(resp, data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
+const (
+	EnimeApiUrl = "https://api.enime.moe"
+)
 
 func SearchAnime(query string) ([]*Result, error) {
-	url := fmt.Sprintf(ApiUrl+"/search?keyw=%s", query)
+	url := fmt.Sprintf(EnimeApiUrl+"/search/%s", query)
 
 	resp, status, err := network.ProcessGet(context.Background(), url, nil)
 	if err != nil {
@@ -43,17 +24,17 @@ func SearchAnime(query string) ([]*Result, error) {
 		return nil, fmt.Errorf("server returned %d", status)
 	}
 
-	data := new([]*Result)
+	data := new(SearchResult)
 
 	if err := json.Unmarshal(resp, data); err != nil {
 		return nil, err
 	}
 
-	return *data, nil
+	return data.Data, nil
 }
 
 func GetAnimeDetails(animeId string) (*Details, error) {
-	url := fmt.Sprintf(ApiUrl+"/anime-details/%s", animeId)
+	url := fmt.Sprintf(EnimeApiUrl+"/anime/%s", animeId)
 
 	resp, status, err := network.ProcessGet(context.Background(), url, nil)
 	if err != nil {
@@ -70,7 +51,26 @@ func GetAnimeDetails(animeId string) (*Details, error) {
 		return nil, err
 	}
 
-	data.EpisodesList = constants.ReverseSlice(data.EpisodesList)
+	return data, nil
+}
+
+func GetAnimeStreamingUrls(sourceId string) (*constants.StreamData, error) {
+	url := fmt.Sprintf(EnimeApiUrl+"/source/%s", sourceId)
+
+	resp, status, err := network.ProcessGet(context.Background(), url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if status != 200 {
+		return nil, fmt.Errorf("server returned %d", status)
+	}
+
+	data := new(constants.StreamData)
+
+	if err := json.Unmarshal(resp, data); err != nil {
+		return nil, err
+	}
 
 	return data, nil
 }
