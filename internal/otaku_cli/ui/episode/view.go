@@ -32,12 +32,12 @@ func (m UI) View() string {
 	if m.episodeLoading {
 		data += styles.OngoingStyle.Render("Starting up VLC ")
 	} else if !m.receivedData {
-		data += styles.OngoingStyle.Render("Waiting for response")
+		data += styles.OngoingStyle.Render(fmt.Sprintf("[%s] Waiting for response", m.source))
 	} else {
-		data += styles.CompletedStyle.Render("Playing")
+		data += styles.CompletedStyle.Render(fmt.Sprintf("[%s] Playing", m.source))
 	}
 
-	data += styles.DetailStyle.Render(fmt.Sprintf("\nEpisode: ")) + m.progress1.ViewAs(currentEpisode/maxEpisodes) + fmt.Sprintf(" %d/%d", int(currentEpisode), int(maxEpisodes))
+	data += styles.DetailStyle.Render(fmt.Sprintf("\nEpisode:  ")) + m.progress1.ViewAs(currentEpisode/maxEpisodes) + fmt.Sprintf(" %d/%d", int(currentEpisode), int(maxEpisodes))
 	data += styles.DetailStyle.Render(fmt.Sprintf("\nPosition: "))
 	if m.currentVLCData == nil || m.currentVLCData.State == "playing" {
 		data += m.progress1.ViewAs(pos/length) + fmt.Sprintf(" %s/%s", time.Time{}.Add(time.Duration(pos)*time.Second).Format("04:05"), time.Time{}.Add(time.Duration(length)*time.Second).Format("04:05"))

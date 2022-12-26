@@ -1,13 +1,15 @@
 package episode
 
 import (
+	"context"
 	"fmt"
 	"github.com/YusufOzmen01/otaku-cli/constants"
 	"github.com/YusufOzmen01/otaku-cli/lib/cmds"
 	"github.com/YusufOzmen01/otaku-cli/lib/database"
+	"github.com/YusufOzmen01/otaku-cli/lib/network"
+	"github.com/YusufOzmen01/otaku-cli/lib/vlc"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"os/exec"
 	"strconv"
 )
 
@@ -36,7 +38,7 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 		pos = time
 	}
 
-	ui := NewUI(m.parentUUID, m.episodes, episodeIndex, m.details)
+	ui := NewUI(m.parentUUID, m.episodes, episodeIndex, m.details, false)
 
 	length, err := strconv.Atoi(m.currentVLCData.Length)
 	if err != nil {
@@ -60,7 +62,7 @@ func (m UI) NextEpisode() (tea.Model, tea.Cmd) {
 	}
 
 	if done {
-		return constants.ReturnUI(m.UUID)
+		return constants.ReturnUI(m.parentUUID)
 	}
 
 	return constants.SwitchUI(m, ui, ui.UUID)
@@ -75,7 +77,7 @@ func (m UI) PreviousEpisode() (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex-1, m.details)
+	ui := NewUI(m.parentUUID, m.episodes, m.currentEpisodeIndex-1, m.details, false)
 
 	return constants.SwitchUI(m, ui, ui.UUID)
 }
@@ -84,6 +86,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if !m.init {
 		m.init = true
 		m.episodeLoading = true
+
+		m.source = "gogoanime"
 
 		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[0].Id)
 	}
@@ -105,21 +109,10 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			panic(err)
 		}
 
-		if m.currentVLCData != nil {
-			lengthM, err := strconv.Atoi(m.currentVLCData.Length)
-			if err != nil {
-				panic(err)
-			}
-
-			if lengthM > 0 && length == 0 && m.currentVLCData.Information.Text == msg.Data.Information.Text && m.receivedData {
-				return constants.ReturnUI(m.parentUUID)
-			}
-		}
-
 		if length > 0 {
 			m.receivedData = true
 
-			if pos+1 >= length {
+			if pos+2 >= length {
 				return m.NextEpisode()
 			}
 		}
@@ -147,7 +140,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		m.currentVLCData = msg.Data
 
-		return m, m.vlcUpdate
+		return m, m.vlcUpdate(m.vlc)
 
 	case tea.KeyMsg:
 		switch {
@@ -169,24 +162,39 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case constants.StreamingUrlsMsg:
-		constants.KillProcessByNameWindows("vlc.exe")
+		_, status, err := network.ProcessGet(context.Background(), msg.Data.Url, nil)
+		if err != nil {
+			m.source = "zoro.to"
 
-		pos := ""
-		episode, err := database.GetEpisodeProgress(m.currentEpisodeIndex, m.details.Id)
-		if err == nil {
-			pos = fmt.Sprintf("--start-time=%d", episode.Position)
+			return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[1].Id)
 		}
 
-		args := []string{msg.Data.Url, pos, "--intf", "qt", "--extraintf", "http", "--http-password=amongus_is_funny", "--http-port=58000"}
+		if status != 200 {
+			m.source = "zoro.to"
 
-		err = exec.Command("vlc", args...).Start()
+			return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[1].Id)
+		}
+
+		args := make([]string, 0)
+		episode, err := database.GetEpisodeProgress(m.currentEpisodeIndex, m.details.Id)
+		if err == nil {
+			args = append(args, fmt.Sprintf("--start-time=%d", episode.Position))
+		}
+
+		if len(msg.Data.Subtitle) > 0 {
+			args = append(args, fmt.Sprintf("--input-slave=%s", msg.Data.Subtitle))
+		}
+
+		v, err := vlc.NewVLC(msg.Data.Url, args)
 		if err != nil {
 			return m, tea.Quit
 		}
 
+		m.vlc = v
+
 		m.episodeLoading = false
 
-		return m, m.vlcUpdate
+		return m, m.vlcUpdate(v)
 	}
 
 	return m, nil

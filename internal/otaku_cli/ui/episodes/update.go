@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/google/uuid"
 )
 
 func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -43,7 +44,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 
 			case key.Matches(msg, m.keys.Enter):
-				ui := episode.NewUI(m.UUID, m.episodes, m.list.Index(), m.details)
+				ui := episode.NewUI(uuid.UUID{}, m.episodes, m.list.Index(), m.details, true)
 
 				anime := &database.Anime{
 					ID:   m.details.Id,

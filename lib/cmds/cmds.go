@@ -15,9 +15,9 @@ func Wait(duration time.Duration) tea.Cmd {
 	}
 }
 
-func GetAnimeStreamingUrls(animeId string) tea.Cmd {
+func GetAnimeStreamingUrls(sourceId string) tea.Cmd {
 	return func() tea.Msg {
-		data, err := anime.GetAnimeStreamingUrls(animeId)
+		data, err := anime.GetAnimeStreamingUrls(sourceId)
 		if err != nil {
 			return constants.ErrMsg{Err: err}
 		}

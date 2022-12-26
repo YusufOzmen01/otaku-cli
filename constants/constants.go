@@ -15,6 +15,7 @@ type StreamData struct {
 	Id       string `json:"id"`
 	Url      string `json:"url"`
 	Referer  string `json:"referer"`
+	Subtitle string `json:"subtitle"`
 	Priority int    `json:"priority"`
 	Browser  bool   `json:"browser"`
 	Website  string `json:"website"`

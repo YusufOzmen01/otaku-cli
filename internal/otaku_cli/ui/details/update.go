@@ -70,7 +70,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				pos = a.CurrentEpisode.Position
 			}
 
-			ui := episode.NewUI(m.UUID, m.Episodes, index, m.Result)
+			ui := episode.NewUI(m.UUID, m.Episodes, index, m.Result, true)
 
 			anime := &database.Anime{
 				ID:   m.Details.Id,

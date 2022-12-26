@@ -1,27 +1,22 @@
 package episode
 
 import (
-	"context"
-	"encoding/xml"
-	"github.com/YusufOzmen01/otaku-cli/lib/network"
+	"github.com/YusufOzmen01/otaku-cli/lib/vlc"
 	tea "github.com/charmbracelet/bubbletea"
+	"time"
 )
 
-func (m UI) vlcUpdate() tea.Msg {
-	body, status, err := network.ProcessGet(context.Background(), "http://localhost:58000/requests/status.xml", map[string]string{"Authorization": "Basic OmFtb25ndXNfaXNfZnVubnk="})
-	if err != nil {
-		return m.vlcUpdate()
+func (m UI) vlcUpdate(v vlc.VLC) tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(time.Millisecond * 100)
+
+		if v != nil {
+			data, err := v.GetVLCData()
+			if err == nil {
+				return VLCMsg{Data: data}
+			}
+		}
+
+		return nil
 	}
-
-	if status != 200 {
-		return m.vlcUpdate()
-	}
-
-	data := new(Root)
-
-	if err := xml.Unmarshal(body, data); err != nil {
-		return m.vlcUpdate()
-	}
-
-	return VLCMsg{Data: data}
 }
