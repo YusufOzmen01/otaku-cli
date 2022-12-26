@@ -18,8 +18,8 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		items := make([]list.Item, 0)
 
-		for _, episode := range m.episodes {
-			items = append(items, list.Item(episode))
+		for _, e := range m.episodes {
+			items = append(items, list.Item(e))
 		}
 
 		m.list = list.New(items, styles.AnimeEpisodesDelegate{AnimeID: m.details.Id}, 0, 20)

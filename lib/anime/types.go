@@ -66,7 +66,7 @@ type Episode struct {
 }
 
 func (i Episode) EpisodeTitle() string {
-	return fmt.Sprintf("Episode %s", i.EpisodeNum)
+	return fmt.Sprintf("Episode %d", i.EpisodeNum)
 }
 
 func (i Episode) FilterValue() string {

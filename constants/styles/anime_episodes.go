@@ -25,7 +25,7 @@ func (d AnimeEpisodesDelegate) Spacing() int {
 	return 0
 }
 
-func (d AnimeEpisodesDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd {
+func (d AnimeEpisodesDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd {
 	return nil
 }
 
