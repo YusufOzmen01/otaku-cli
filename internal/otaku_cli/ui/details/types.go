@@ -21,8 +21,8 @@ type Keymap struct {
 var (
 	keys = Keymap{
 		Watch: key.NewBinding(
-			key.WithKeys("w"),
-			key.WithHelp("w", "start watching")),
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "start watching")),
 		Finished: key.NewBinding(
 			key.WithKeys("f"),
 			key.WithHelp("f", "mark as finished")),
