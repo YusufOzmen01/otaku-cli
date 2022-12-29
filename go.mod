@@ -3,6 +3,7 @@ module github.com/YusufOzmen01/otaku-cli
 go 1.19
 
 require (
+	github.com/DexterLB/mpvipc v0.0.0-20221227161445-38b9935eae9d
 	github.com/akrylysov/pogreb v0.10.1
 	github.com/charmbracelet/bubbles v0.14.0
 	github.com/charmbracelet/bubbletea v0.22.1
@@ -27,4 +28,5 @@ require (
 	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 )

@@ -26,7 +26,7 @@ type VLC interface {
 }
 
 func NewVLC(file string, parameters []string) (VLC, error) {
-	constants.KillProcessByNameWindows("vlc.exe")
+	constants.KillProcessByName("vlc.exe")
 
 	port := rand.Intn(10000) + 50000
 	password := constants.RandomString(32)

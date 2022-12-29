@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"math/rand"
 	"os/exec"
+	"runtime"
 )
 
 var (
@@ -37,12 +38,22 @@ func ReturnUI(selfUUID uuid.UUID) (tea.Model, tea.Cmd) {
 	}
 }
 
-func KillProcessByNameWindows(processName string) int {
-	kill := exec.Command("taskkill", "/im", processName, "/T", "/F")
-	err := kill.Run()
-	if err != nil {
-		return -1
-	}
+func KillProcessByName(processName string) error {
+	if runtime.GOOS == "windows" {
+		kill := exec.Command("taskkill", "/im", processName+".exe", "/T", "/F")
+		err := kill.Run()
+		if err != nil {
+			return err
+		}
 
-	return 0
+		return nil
+	} else {
+		kill := exec.Command("killall", processName)
+		err := kill.Run()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 }

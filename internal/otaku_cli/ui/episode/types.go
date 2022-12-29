@@ -2,7 +2,7 @@ package episode
 
 import (
 	"github.com/YusufOzmen01/otaku-cli/lib/anime"
-	"github.com/YusufOzmen01/otaku-cli/lib/vlc"
+	"github.com/YusufOzmen01/otaku-cli/lib/mpv"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
@@ -44,14 +44,20 @@ func (k Keymap) FullHelp() [][]key.Binding {
 	}
 }
 
-type VLCMsg struct {
-	Data *vlc.VLCData
+type ProgressData struct {
+	Time   int
+	Length int
+	Paused bool
+}
+
+type ProgressUpdate struct {
+	Data *mpv.Progress
 }
 
 type UI struct {
 	tea.Model
 	UUID uuid.UUID
-	vlc  vlc.VLC
+	mpv  mpv.MPV
 
 	episodes            []*anime.Episode
 	parentUUID          uuid.UUID
@@ -59,9 +65,9 @@ type UI struct {
 	currentEpisodeIndex int
 	init                bool
 	episodeLoading      bool
-	receivedData        bool
-	currentVLCData      *vlc.VLCData
+	mpvLoading          bool
 	source              string
+	currentProgress     *mpv.Progress
 
 	keys      Keymap
 	help      help.Model
