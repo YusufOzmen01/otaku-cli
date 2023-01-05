@@ -1,0 +1,2 @@
+# otaku-cli
+.
