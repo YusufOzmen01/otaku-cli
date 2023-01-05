@@ -63,7 +63,7 @@ func (m *mpv) GetData() (*Progress, bool, bool) {
 }
 
 func (m *mpv) start() {
-	params := []string{m.file, fmt.Sprintf("--start=%d", m.time), fmt.Sprintf("--input-ipc-server=%s", m.pipePath)}
+	params := []string{fmt.Sprintf("--playlist=%s", m.file), fmt.Sprintf("--start=%d", m.time), fmt.Sprintf("--input-ipc-server=%s", m.pipePath)}
 
 	if len(m.subtitles) > 0 {
 		params = append(params, fmt.Sprintf("--sub-file=%s", m.subtitles))

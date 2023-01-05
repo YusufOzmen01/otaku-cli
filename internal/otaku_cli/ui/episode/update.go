@@ -84,7 +84,7 @@ func (m UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		m.source = "gogoanime"
 
-		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[0].Id)
+		return m, cmds.GetAnimeStreamingUrls(m.episodes[m.currentEpisodeIndex].Sources[1].Id)
 	}
 
 	switch msg := msg.(type) {
